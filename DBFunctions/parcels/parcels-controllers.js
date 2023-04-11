@@ -45,7 +45,6 @@ const deleteParcel = async (req, res) => {
 const updateParcel = async (req, res) => {
     const idToUpdate = req.params.id;
     const updatedParcel = req.body;
-    console.log(updatedParcel);
     const status = await parcelsDao.updateParcel(idToUpdate, updatedParcel);
     res.json(status);
 };
