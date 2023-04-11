@@ -34,7 +34,7 @@ const createParcel = async (req, res) => {
     res.json(insertedParcel);
 };
 
-// Delete
+// Delete -- return null when unsuccessful
 const deleteParcel = async (req, res) => {
     const idToDelete = req.params.id;
     const status = await parcelsDao.deleteParcel(idToDelete);
@@ -45,6 +45,7 @@ const deleteParcel = async (req, res) => {
 const updateParcel = async (req, res) => {
     const idToUpdate = req.params.id;
     const updatedParcel = req.body;
+    console.log(updatedParcel);
     const status = await parcelsDao.updateParcel(idToUpdate, updatedParcel);
     res.json(status);
 };

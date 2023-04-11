@@ -10,7 +10,9 @@ const schema = mongoose.Schema({
         isWeighted: {type: Boolean, required: true, default: false},
         weight: { type: Number, required: false }, // not required
         shipGroup:{ type: mongoose.Types.ObjectId, required: false}, // not required
+        created: {type: Date, required: true, default: Date.now},
     },
+    { versionKey: false },
     {collection: 'parcels'});
 
 export default schema;

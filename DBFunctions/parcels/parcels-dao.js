@@ -13,7 +13,7 @@ export const createParcel = (newParcel) =>
     parcelsModel.create(newParcel);
 
 export const deleteParcel = (id) =>
-    parcelsModel.deleteOne({_id: id});
+    parcelsModel.findByIdAndDelete({_id: id});
 
 export const updateParcel = (id, newParcel) =>
-    parcelsModel.updateOne({_id: id}, {$set: newParcel})
+    parcelsModel.findByIdAndUpdate({_id: id}, {$set: newParcel})
