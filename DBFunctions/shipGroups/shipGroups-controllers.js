@@ -11,41 +11,65 @@ export const ShipGroupsController = (app) => {
 
 // Find - all / by id / by trackingNumber
 const findAllShipGroups = async (req, res) => {
-    const shipGroups = await shipGroupsDao.findAllShipGroups();
-    res.json(shipGroups);
+    try {
+        const shipGroups = await shipGroupsDao.findAllShipGroups();
+        res.json(shipGroups);
+    } catch (err) {
+        res.status(500).send({ status: 500, detail: err.message });
+    }
 };
 
 const findShipGroupById = async (req, res) => {
-    const idToFind = req.params.id;
-    const shipGroup = await shipGroupsDao.findShipGroupById(idToFind);
-    res.json(shipGroup);
+    try {
+        const idToFind = req.params.id;
+        const shipGroup = await shipGroupsDao.findShipGroupById(idToFind);
+        res.json(shipGroup);
+    } catch (err) {
+        res.status(500).send({ status: 500, detail: err.message });
+    }
 };
 
 const findShipGroupByTrackingNumber = async (req, res) => {
-    const trackingNumber = req.params.trackingNumber;
-    const shipGroup = await shipGroupsDao.findShipGroupByTrackingNumber(trackingNumber);
-    res.json(shipGroup);
+    try {
+        const trackingNumber = req.params.trackingNumber;
+        const shipGroup = await shipGroupsDao.findShipGroupByTrackingNumber(trackingNumber);
+        res.json(shipGroup);
+    } catch (err) {
+        res.status(500).send({ status: 500, detail: err.message });
+    }
 };
 
 // Create
 const createShipGroup = async (req, res) => {
-    const newShipGroup = req.body;
-    const insertedShipGroup = await shipGroupsDao.createShipGroup(newShipGroup);
-    res.json(insertedShipGroup);
+    try {
+        const newShipGroup = req.body;
+
+        const insertedShipGroup = await shipGroupsDao.createShipGroup(newShipGroup);
+        res.json(insertedShipGroup);
+    } catch (err) {
+        res.status(500).send({ status: 500, detail: err.message });
+    }
 };
 
 // Delete -- return null when unsuccessful
 const deleteShipGroup = async (req, res) => {
-    const idToDelete = req.params.id;
-    const status = await shipGroupsDao.deleteShipGroup(idToDelete);
-    res.json(status);
+    try {
+        const idToDelete = req.params.id;
+        await shipGroupsDao.deleteShipGroup(idToDelete);
+        res.json({});
+    } catch (err) {
+        res.status(500).send({ status: 500, detail: err.message });
+    }
 };
 
 // Update
 const updateShipGroup = async (req, res) => {
-    const idToUpdate = req.params.id;
-    const updatedShipGroup = req.body;
-    const status = await shipGroupsDao.updateShipGroup(idToUpdate, updatedShipGroup)
-            .then(() => shipGroupsDao.findShipGroupById(idToUpdate));
-    res.json(status);
+    try {
+        const idToUpdate = req.params.id;
+        const updatedShipGroup = req.body;
+        const status = await shipGroupsDao.updateShipGroup(idToUpdate, updatedShipGroup);
+        res.json(status);
+    } catch (err) {
+        res.status(500).send({ status: 500, detail: err.message });
+    }
 };

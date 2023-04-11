@@ -1,20 +1,19 @@
 import shipGroupsModel from './shipGroups-model.js';
 
-export const findAllShipGroups = () =>
-    shipGroupsModel.find();
+export const findAllShipGroups = async () =>
+    await shipGroupsModel.find();
 
-export const findShipGroupById = (id) =>
-    shipGroupsModel.findById(id);
+export const findShipGroupById = async (id) =>
+    await shipGroupsModel.findById(id);
 
-export const findShipGroupByTrackingNumber = (trackingNumber) =>
-    shipGroupsModel.findOne({ trackingNumber });
+export const findShipGroupByTrackingNumber = async (trackingNumber) =>
+    await shipGroupsModel.findOne({ trackingNumber });
 
-export const createShipGroup = (newShipGroup) =>
-    shipGroupsModel.create(newShipGroup);
+export const createShipGroup = async (newShipGroup) =>
+    await shipGroupsModel.create(newShipGroup);
 
-export const deleteShipGroup = (id) =>
-    shipGroupsModel.findByIdAndDelete({_id: id});
+export const deleteShipGroup = async (id) =>
+    await shipGroupsModel.findByIdAndDelete({ _id: id });
 
-export const updateShipGroup = (id, newShipGroup) =>
-    shipGroupsModel.findByIdAndUpdate({_id: id}, {$set: newShipGroup})
-    
+export const updateShipGroup = async (id, newShipGroup) =>
+    await shipGroupsModel.findByIdAndUpdate({ _id: id }, { $set: newShipGroup })
