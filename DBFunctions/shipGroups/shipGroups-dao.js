@@ -16,4 +16,8 @@ export const deleteShipGroup = async (id) =>
     await shipGroupsModel.findByIdAndDelete({ _id: id });
 
 export const updateShipGroup = async (id, newShipGroup) =>
-    await shipGroupsModel.findByIdAndUpdate({ _id: id }, { $set: newShipGroup })
+    await shipGroupsModel.findByIdAndUpdate(
+        { _id: id },
+        { $set: newShipGroup },
+        { new: true }
+    )
