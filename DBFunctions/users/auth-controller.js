@@ -12,6 +12,7 @@ const JWT_SECRET = 'hashkeyforshipshare';
 export const AuthController = (app) => {
     app.post('/auth/signup', signup);
     app.post('/auth/login', login);
+    app.post('/auth/changePassword', changePassword);
 }
 
 // Sign up -- enter [name, email, password, role], return [token = id]
@@ -82,9 +83,54 @@ export const login = async (req, res) => {
     }
 };
 
+// Change password -- enter [email, oldPassword, newPassword]
+export const changePassword = async (req, res) => {
+    try {
+        const { email, oldPassword, newPassword } = req.body;
+        const user = await findUserByEmail(email);
+
+        // Compare
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Incorrect old password' });
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update the user's password in the database
+        await updateUserPassword(email, hashedPassword);
+
+        // Return success message
+        res.json({ message: 'Password updated successfully' });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Error changing password' });
+    }
+};
+
 
 // utility function
 const findUserByEmail = async (email) => {
     const users = await usersDao.findUserByEmail(email);
     return users[0];
+}
+
+// c. Update -- return null when unsuccessful
+const updateUserPassword = async (email, password) => {
+    const user = await findUserByEmail(email);
+    const newUser = { ...user._doc, password };
+
+    const id = user._id;
+    const role = user.role;
+
+    if (role === 'buyer') {
+        await usersDao.updateBuyer(id, newUser)
+    }
+    else if (role === 'merchant') {
+        await usersDao.updateMerchant(id, newUser)
+    }
+    else if (role === 'admin') {
+        await usersDao.updateAdmin(id, newUser)
+    }
 }

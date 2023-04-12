@@ -74,17 +74,14 @@ const updateUser = async (req, res) => {
 
     // Update user object - based on role
     if (role === 'buyer') {
-        console.log('buyer')
         status = await usersDao.updateBuyer(idToUpdate, updatedUser)
             .then(() => usersDao.findBuyerById(idToUpdate));
     }
     else if (role === 'merchant') {
-        console.log('merchant')
         status = await usersDao.updateMerchant(idToUpdate, updatedUser)
             .then(() => usersDao.findMerchantById(idToUpdate));
     }
     else if (role === 'admin') {
-        console.log('admin')
         status = await usersDao.updateAdmin(idToUpdate, updatedUser)
             .then(() => usersDao.findAdminById(idToUpdate));
     }
