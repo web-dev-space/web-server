@@ -4,18 +4,18 @@ import {
     createAdmin,
 } from './users-dao.js';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import * as usersDao from "./users-dao.js";
 
-const JWT_SECRET = 'hashkeyforshipshare';
 
 export const AuthController = (app) => {
-    app.post('/auth/signup', signup);
-    app.post('/auth/login', login);
-    app.post('/auth/changePassword', changePassword);
+    app.post('/users/signup', signup);
+    app.post('/users/login', login);
+    app.post('/users/changePassword', changePassword);
+    app.post("/users/profile", profile);
+    app.post("/users/logout",  logout);
 }
 
-// Sign up -- enter [name, email, password, role], return [token = id]
+// Sign up -- enter [name, email, password, role], return [newUser]
 export const signup = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
@@ -43,18 +43,16 @@ export const signup = async (req, res) => {
             createdUser = await createAdmin(newUser);
         }
 
-        // generate token for authentication
-        const token = jwt.sign({ id: createdUser._id }, JWT_SECRET);
-
-        // return success response and generated token
-        res.status(201).json({ message: 'User created successfully', token });
+        // return success response
+        req.session["currentUser"] = newUser;
+        res.json(newUser);
     } catch (error) {
         res.status(500).json({ message: 'Error creating user' });
     }
 };
 
 
-// Login -- enter [email, password], return [token = id]
+// Login -- enter [email, password], return [user]
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -67,30 +65,51 @@ export const login = async (req, res) => {
             return res.status(404).json({ message: 'User does not exist' });
         }
 
-        // Check if password is correct
+        // 2. Check if password is correct
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Wrong password' });
         }
 
-        // Generate token for authentication
-        const token = jwt.sign({ id: user._id }, JWT_SECRET);
-
-        // Return success response and generated token
-        res.status(200).json({ message: 'Login successful', token });
+        // 4. Return success response
+        req.session["currentUser"] = user;
+        res.json(user);
     } catch (error) {
         res.status(500).json({ message: 'Error logging in' });
     }
 };
 
-// Change password -- enter [email, oldPassword, newPassword]
+// Profile
+const profile = async (req, res) => {
+    const currentUser = req.session["currentUser"];
+    if (!currentUser) {
+        res.sendStatus(404);
+        return;
+    }
+    res.json(currentUser);
+};
+
+// Logout
+const logout = async (req, res) => {
+    req.session.destroy();
+    res.sendStatus(200)
+};
+
+
+// Change password -- enter [oldPassword, newPassword]
 export const changePassword = async (req, res) => {
     try {
-        const { email, oldPassword, newPassword } = req.body;
-        const user = await findUserByEmail(email);
+        const { oldPassword, newPassword } = req.body;
+
+        // Check if user logged in
+        const currentUser = req.session["currentUser"];
+        if (!currentUser) {
+            res.sendStatus(404);
+            return;
+        }
 
         // Compare
-        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        const isMatch = await bcrypt.compare(oldPassword, currentUser.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Incorrect old password' });
         }
@@ -99,7 +118,7 @@ export const changePassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         // Update the user's password in the database
-        await updateUserPassword(email, hashedPassword);
+        await updateUserPassword(currentUser, hashedPassword);
 
         // Return success message
         res.json({ message: 'Password updated successfully' });
@@ -110,6 +129,7 @@ export const changePassword = async (req, res) => {
 };
 
 
+
 // utility function
 const findUserByEmail = async (email) => {
     const users = await usersDao.findUserByEmail(email);
@@ -117,20 +137,17 @@ const findUserByEmail = async (email) => {
 }
 
 // c. Update -- return null when unsuccessful
-const updateUserPassword = async (email, password) => {
-    const user = await findUserByEmail(email);
-    const newUser = { ...user._doc, password };
-
+const updateUserPassword = async (user, password) => {
     const id = user._id;
     const role = user.role;
 
     if (role === 'buyer') {
-        await usersDao.updateBuyer(id, newUser)
+        await usersDao.updateBuyer(id, {password})
     }
     else if (role === 'merchant') {
-        await usersDao.updateMerchant(id, newUser)
+        await usersDao.updateMerchant(id, {password})
     }
     else if (role === 'admin') {
-        await usersDao.updateAdmin(id, newUser)
+        await usersDao.updateAdmin(id, {password})
     }
 }

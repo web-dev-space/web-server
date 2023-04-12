@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors'
+import session from "express-session";
 import mongoose from "mongoose";
 import {ParcelsController} from "./DBFunctions/parcels/parcels-controllers.js";
 import { ShipGroupsController } from './DBFunctions/shipGroups/shipGroups-controllers.js';
@@ -14,11 +15,26 @@ const CONNECTION_STRING = process.env.SHIPSHARE_WEB_KEY
 console.log(CONNECTION_STRING);
 mongoose.connect(CONNECTION_STRING);
 
-
 // express & cors
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+// session
+app.use(
+    session({
+        secret: "any string",
+        resave: false,
+        saveUninitialized: true,
+    })
+);
+
+// app.use(cors());
+app.use(
+    cors({
+        credentials: true,
+        origin: "http://localhost:3000",
+    })
+);
 
 
 // -------------Controllers----------------
