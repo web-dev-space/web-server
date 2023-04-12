@@ -23,7 +23,7 @@ export const findUserByEmail = async (email) => {
 
 // Buyer
 export const findAllBuyers= () =>
-    buyerModel.find();
+    buyerModel.find().where('role').equals('buyer');
 
 export const findBuyerById = (id) =>
     buyerModel.findById(id);
@@ -43,7 +43,7 @@ export const updateBuyer = (id, newBuyer) =>
 
 // Merchant
 export const findAllMerchants = () =>
-    merchantModel.find();
+    merchantModel.find().where('role').equals('merchant');
 
 export const findMerchantById = (id) =>
     merchantModel.findById(id);
@@ -63,7 +63,7 @@ export const updateMerchant = (id, newMerchant) =>
 
 // Admin
 export const findAllAdmins = () =>
-    adminModel.find();
+    adminModel.find().where('role').equals('admin');
 
 export const findAdminById = (id) =>
     adminModel.findById(id);
