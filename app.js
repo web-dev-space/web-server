@@ -2,9 +2,10 @@ import express from 'express';
 import cors from 'cors'
 import mongoose from "mongoose";
 import {ParcelsController} from "./DBFunctions/parcels/parcels-controllers.js";
+import { ShipGroupsController } from './DBFunctions/shipGroups/shipGroups-controllers.js';
+import { PostController } from './DBFunctions/posts/posts-controllers.js';
 import {UsersController} from "./DBFunctions/users/users-controllers.js";
 import {AuthController} from "./DBFunctions/users/auth-controller.js";
-
 
 // -------------Set Ups----------------
 // link to mongoDB
@@ -22,6 +23,8 @@ app.use(cors());
 
 // -------------Controllers----------------
 ParcelsController(app);
+ShipGroupsController(app);
+PostController(app);
 UsersController(app);
 AuthController(app);
 
