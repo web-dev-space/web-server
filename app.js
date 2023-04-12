@@ -8,6 +8,7 @@ import {ParcelsController} from "./DBFunctions/parcels/parcels-controllers.js";
 // link to mongoDB
 const CONNECTION_STRING = process.env.SHIPSHARE_WEB_KEY
     || 'mongodb://localhost:27017/web-shipshare';
+console.log(CONNECTION_STRING);
 mongoose.connect(CONNECTION_STRING);
 
 
