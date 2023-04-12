@@ -3,9 +3,11 @@ import * as usersDao from './users-dao.js';
 // --------------------All users--------------------
 // a. Find - all / by id / by email
 export const UsersController = (app) => {
-    app.get('/user', findAllUsers);
-    app.get('/user/:id', findUserById);
-    app.get('/user/email/:email', findUserByEmail);
+    app.get('/users', findAllUsers);
+    app.get('/users/:id', findUserById);
+    app.get('/users/email/:email', findUserByEmail);
+    app.delete('/users/:id', deleteUser);
+    app.put('/users/:id', updateBuyer);
 }
 
 const findAllUsers = async (req, res) => {
