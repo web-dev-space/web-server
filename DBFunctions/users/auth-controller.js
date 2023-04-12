@@ -1,10 +1,11 @@
 import {
     createBuyer,
     createMerchant,
-    createAdmin, findUserByEmail
+    createAdmin,
 } from './users-dao.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import * as usersDao from "./users-dao.js";
 
 const JWT_SECRET = 'hashkeyforshipshare';
 
@@ -20,7 +21,8 @@ export const signup = async (req, res) => {
 
         // Check if user with same email exists
         const existingUser = await findUserByEmail(email);
-        if (existingUser) {
+        console.log(existingUser);
+        if (existingUser ) {
             return res.status(409).json({ message: 'User with same email already exists' });
         }
 
@@ -67,7 +69,7 @@ export const login = async (req, res) => {
         // Check if password is correct
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Wrong password' });
         }
 
         // Generate token for authentication
@@ -79,3 +81,10 @@ export const login = async (req, res) => {
         res.status(500).json({ message: 'Error logging in' });
     }
 };
+
+
+// utility function
+const findUserByEmail = async (email) => {
+    const users = await usersDao.findUserByEmail(email);
+    return users[0];
+}

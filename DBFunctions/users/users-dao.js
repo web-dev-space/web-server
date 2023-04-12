@@ -1,23 +1,23 @@
 import { buyerModel, merchantModel, adminModel } from './users-model.js';
 
-export const findAllUsers = () => {
-    const buyers = findAllBuyers();
-    const merchants = findAllMerchants();
-    const admins = findAllAdmins();
+export const findAllUsers = async () => {
+    const buyers = await findAllBuyers().exec();
+    const merchants = await findAllMerchants().exec();
+    const admins = await findAllAdmins().exec();
     return [...buyers, ...merchants, ...admins];
 }
 
-export const findUserById = (id) => {
-    const buyer = findBuyerById(id);
-    const merchant = findMerchantById(id);
-    const admin = findAdminById(id);
+export const findUserById =  async (id) => {
+    const buyer = await findBuyerById(id).exec();
+    const merchant = await findMerchantById(id).exec();
+    const admin = await findAdminById(id).exec();
     return buyer || merchant || admin;
 }
 
-export const findUserByEmail = (email) => {
-    const buyer = findBuyerByEmail(email);
-    const merchant = findMerchantByEmail(email);
-    const admin = findAdminByEmail(email);
+export const findUserByEmail = async (email) => {
+    const buyer = await findBuyerByEmail(email).exec();
+    const merchant = await findMerchantByEmail(email).exec();
+    const admin = await findAdminByEmail(email).exec();
     return buyer || merchant || admin;
 }
 
