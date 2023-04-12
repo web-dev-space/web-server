@@ -10,7 +10,7 @@ import * as usersDao from "./users-dao.js";
 export const AuthController = (app) => {
     app.post('/users/signup', signup);
     app.post('/users/login', login);
-    app.post('/users/changePassword', changePassword);
+    app.put('/users/changePassword', changePassword);
     app.post("/users/profile", profile);
     app.post("/users/logout",  logout);
 }
