@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors'
 import mongoose from "mongoose";
-import {ParcelsController} from "./DBFunctions/parcels/parcels-controllers.js";
+import { ParcelsController } from "./DBFunctions/parcels/parcels-controllers.js";
+import { ShipGroupsController } from './DBFunctions/shipGroups/shipGroups-controllers.js';
 
 
 // -------------Set Ups----------------
@@ -19,6 +20,7 @@ app.use(cors());
 
 // -------------Controllers----------------
 ParcelsController(app);
+ShipGroupsController(app);
 
 
 app.listen(4000)
