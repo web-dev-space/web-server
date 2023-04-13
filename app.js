@@ -7,6 +7,7 @@ import { ShipGroupsController } from './DBFunctions/shipGroups/shipGroups-contro
 import { PostController } from './DBFunctions/posts/posts-controllers.js';
 import {UsersController} from "./DBFunctions/users/users-controllers.js";
 import {AuthController} from "./DBFunctions/users/auth-controller.js";
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 // -------------Set Ups----------------
 // link to mongoDB
@@ -35,6 +36,14 @@ app.use(
         origin: [/^https:\/\/.*\.netlify\.app$/, "http://localhost:3000"],
     })
 );
+
+app.use('/tracking', createProxyMiddleware({
+    target: 'https://api.tracktry.com',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/tracking': '/v1',
+    },
+}));
 
 
 // -------------Controllers----------------
