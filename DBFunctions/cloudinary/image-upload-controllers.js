@@ -7,7 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 const ImageController = (app) => {
     app.post('/upload_image', upload.single('image'), async (req, res) => {
         try {
-            const filename = uuidv4() + ".jpg";
+            const filename = uuidv4();
+
             // Upload image to cloudinary using a buffer
             const result = await new Promise((resolve, reject) => {
                 const uploadStream = cloudinary.uploader.upload_stream(
