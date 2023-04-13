@@ -15,7 +15,6 @@ const ImageController = (app) => {
                     bufferData = Buffer.concat([bufferData, data]);
                 });
 
-                // 流式传输文件数据完成
                 file.on('end', async () => {
                     try {
                         const result = await cloudinary.uploader.upload_stream(
