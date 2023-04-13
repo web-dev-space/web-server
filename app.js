@@ -38,10 +38,10 @@ app.use(
 );
 
 app.use('/tracking', createProxyMiddleware({
-    target: 'https://api.tracktry.com',  // 代理目标的地址
+    target: 'https://api.tracktry.com',
     changeOrigin: true,
     pathRewrite: {
-        '^/tracking': '/v1', // 替换路径，以便正确地访问代理目标
+        '^/tracking': '/v1',
     },
 }));
 
