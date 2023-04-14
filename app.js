@@ -8,6 +8,7 @@ import { PostController } from './DBFunctions/posts/posts-controllers.js';
 import { UsersController } from "./DBFunctions/users/users-controllers.js";
 import { AuthController } from "./DBFunctions/users/auth-controller.js";
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import {WarehouseController} from "./DBFunctions/warehouse/warehouse-controller.js";
 import { v2 as cloudinary } from 'cloudinary';
 import ImageController from "./DBFunctions/cloudinary/image-upload-controllers.js";
 import { config as dotenvConfig } from 'dotenv';
@@ -66,7 +67,7 @@ ShipGroupsController(app);
 PostController(app);
 UsersController(app);
 AuthController(app);
+WarehouseController(app);
 ImageController(app);
-
 
 app.listen(4000)
