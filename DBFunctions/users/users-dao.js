@@ -79,3 +79,13 @@ export const deleteAdmin = (id) =>
 
 export const updateAdmin = (id, newAdmin) =>
     adminModel.findByIdAndUpdate({_id: id}, {$set: newAdmin})
+
+export const countNewUsers = async () => {
+    // count new users who registered in the last 7 days
+    const today = new Date();
+    // find the date 7 days ago
+    const sevenDaysAgo = new Date(today - (7 * 24 * 60 * 60 * 1000));
+
+    const newUserCounts = await buyerModel.countDocuments({created: {$gte: sevenDaysAgo}});
+    return {newUserCounts};
+}
