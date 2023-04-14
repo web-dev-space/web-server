@@ -8,6 +8,7 @@ import { PostController } from './DBFunctions/posts/posts-controllers.js';
 import {UsersController} from "./DBFunctions/users/users-controllers.js";
 import {AuthController} from "./DBFunctions/users/auth-controller.js";
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import {WarehouseController} from "./DBFunctions/warehouse/warehouse-controller.js";
 
 // -------------Set Ups----------------
 // link to mongoDB
@@ -52,6 +53,7 @@ ShipGroupsController(app);
 PostController(app);
 UsersController(app);
 AuthController(app);
+WarehouseController(app);
 
 
 app.listen(4000)
