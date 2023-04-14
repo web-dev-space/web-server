@@ -10,36 +10,55 @@ export const PostController = (app) => {
 
 // Find - all / by id
 const findAllPosts = async (req, res) => {
-  const posts = await postsDao.findAllPosts();
-  res.json(posts);
+  try {
+    const posts = await postsDao.findAllPosts();
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: "An error occurred while fetching posts." });
+  }
 };
 
 const findPostById = async (req, res) => {
-  const idToFind = req.params.id;
-  const post = await postsDao.findPostById(idToFind);
-  res.json(post);
+  try {
+    const idToFind = req.params.id;
+    const post = await postsDao.findPostById(idToFind);
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: `An error occurred while fetching the post with ID ${idToFind}.` });
+  }
 };
 
 // Create
 const createPost = async (req, res) => {
-  const newPost = req.body;
-  const insertedPost = await postsDao.createPost(newPost);
-  res.json(insertedPost);
+  try {
+    const newPost = req.body;
+    const insertedPost = await postsDao.createPost(newPost);
+    res.json(insertedPost);
+  } catch (error) {
+    res.status(500).json({ message: "An error occurred while creating the post." });
+  }
 };
 
 // Delete -- return null when unsuccessful
 const deletePost = async (req, res) => {
-  const idToDelete = req.params.id;
-  const status = await postsDao.deletePost(idToDelete);
-  res.json(status);
+  try {
+    const idToDelete = req.params.id;
+    const status = await postsDao.deletePost(idToDelete);
+    res.json(status);
+  } catch (error) {
+    res.status(500).json({ message: `An error occurred while deleting the post with ID ${idToDelete}.` });
+  }
 };
 
 // Update
 const updatePost = async (req, res) => {
-  const idToUpdate = req.params.id;
-  const updatedPost = req.body;
-  const status = await postsDao
-    .updatePost(idToUpdate, updatedPost)
-    .then(() => postsDao.findPostById(idToUpdate));
-  res.json(status);
+  try {
+    const idToUpdate = req.params.id;
+    const updatedPost = req.body;
+    await postsDao.updatePost(idToUpdate, updatedPost);
+    const post = await postsDao.findPostById(idToUpdate);
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: `An error occurred while updating the post with ID ${idToUpdate}.` });
+  }
 };
