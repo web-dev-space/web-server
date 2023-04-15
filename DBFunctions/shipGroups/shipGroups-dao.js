@@ -111,7 +111,7 @@ export const getShipmentRecentActivity = async () => {
 
 };
 
-export const getFiveUsersWithMostShipments = async () => {
+export const getFiveLeadersWithMostShipments = async () => {
   const pipelineResult = await shipGroupsModel.aggregate([
     {
       $lookup: {
@@ -155,12 +155,51 @@ export const getFiveUsersWithMostShipments = async () => {
     }
   ]);
 
-  // const topFiveUsers = pipelineResult
-  //   .reduce((acc, cur) => {
-  //     acc.push({ leader: cur.leader, amount: cur.count, name: cur.name });
-  //     return acc;
-  //   }, [])
-  //   .sort((a, b) => b.amount - a.amount);
+  return { topFiveLeaders: pipelineResult };
+};
 
-  return { topFiveUsers: pipelineResult };
+
+export const getFiveUsersWithMostShipments = async () => {
+  const pipelineResult = await shipGroupsModel.aggregate([
+    { $unwind: "$members" },
+    {
+      $group: {
+        _id: "$members",
+        amount: { $sum: 1 },
+      },
+    },
+    { $sort: { amount: -1 } },
+    { $limit: 5 },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "email",
+        as: "user",
+      },
+    },
+    { $unwind: "$user" },
+    {
+      $addFields: {
+        name: "$user.name",
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        email: "$_id",
+        name: 1,
+        amount: 1,
+      },
+    },
+  ]);
+
+  const topFiveUsers = pipelineResult
+    .reduce((acc, cur) => {
+      acc.push(cur);
+      return acc;
+    }, [])
+    .sort((a, b) => b.amount - a.amount);
+
+  return { topFiveUsers: topFiveUsers };
 };

@@ -14,6 +14,7 @@ import ImageController from "./DBFunctions/cloudinary/image-upload-controllers.j
 import { config as dotenvConfig } from 'dotenv';
 import { getShipmentRecentActivity } from "./DBFunctions/shipGroups/shipGroups-dao.js";
 import { countAllParcels } from "./DBFunctions/parcels/parcels-dao.js";
+import statisticController from "./DBFunctions/statistic/statistic-controller.js";
 
 dotenvConfig();
 
@@ -71,5 +72,6 @@ UsersController(app);
 AuthController(app);
 WarehouseController(app);
 ImageController(app);
+statisticController(app);
 
 app.listen(4000)
