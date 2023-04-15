@@ -114,48 +114,47 @@ export const getShipmentRecentActivity = async () => {
 export const getFiveLeadersWithMostShipments = async () => {
   const pipelineResult = await shipGroupsModel.aggregate([
     {
-      $lookup: {
-        from: 'users',
-        localField: 'leader',
-        foreignField: 'email',
-        as: 'userArray'
-      }
-    },
-    {
-      $addFields: {
-        user: { $arrayElemAt: ["$userArray", 0] }
-      }
-    },
-    {
-      $addFields: {
-        name: "$user.name"
-      }
-    },
-    {
       $group: {
-        _id: { leader: "$leader", name: "$name" },
-        count: { $sum: 1 },
+        _id: "$leader",
+        amount: { $sum: 1 },
       },
     },
+    { $sort: { amount: -1 } },
+    { $limit: 5 },
     {
-      $sort: {
-        count: -1,
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "email",
+        as: "user",
       },
     },
+    { $unwind: "$user" },
     {
-      $limit: 5,
+      $addFields: {
+        name: "$user.name",
+        avatar: "$user.avatar",
+      },
     },
     {
       $project: {
         _id: 0,
-        leader: "$_id.leader",
-        name: "$_id.name",
-        count: 1,
-      }
-    }
+        email: "$_id",
+        avatar: 1,
+        name: 1,
+        amount: 1,
+      },
+    },
   ]);
 
-  return { topFiveLeaders: pipelineResult };
+  const topFiveLeaders = pipelineResult.map((leader, index) => {
+    return {
+      ...leader,
+      rank: `Top ${index + 1}`
+    }
+  });
+
+  return { topFiveLeaders: topFiveLeaders };
 };
 
 
@@ -182,24 +181,26 @@ export const getFiveUsersWithMostShipments = async () => {
     {
       $addFields: {
         name: "$user.name",
+        avatar: "$user.avatar",
       },
     },
     {
       $project: {
         _id: 0,
         email: "$_id",
+        avatar: 1,
         name: 1,
         amount: 1,
       },
     },
   ]);
 
-  const topFiveUsers = pipelineResult
-    .reduce((acc, cur) => {
-      acc.push(cur);
-      return acc;
-    }, [])
-    .sort((a, b) => b.amount - a.amount);
+  const topFiveUsers = pipelineResult.map((user, index) => {
+    return {
+      ...user,
+      rank: `Top ${index + 1}`
+    }
+  })
 
   return { topFiveUsers: topFiveUsers };
 };
