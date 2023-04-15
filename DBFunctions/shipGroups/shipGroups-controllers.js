@@ -3,6 +3,7 @@ import * as shipGroupsDao from "./shipGroups-dao.js";
 export const ShipGroupsController = (app) => {
   app.get("/shipGroups/count", getShipGroupTotalNumber);
   app.get("/shipGroups/recentActivity", getShipmentRecentActivity);
+  app.get("/shipGroups/topFiveUsers", getFiveUsersWithMostShipments);
   app.get("/shipGroups", findAllShipGroups);
   app.get("/shipGroups/:id", findShipGroupById);
   app.get(
@@ -96,6 +97,15 @@ const getShipGroupTotalNumber = async (req, res) => {
 const getShipmentRecentActivity = async (req, res) => {
   try {
     const answer = await shipGroupsDao.getShipmentRecentActivity();
+    res.json(answer);
+  } catch (err) {
+    res.status(500).send({ status: 500, detail: err.message });
+  }
+};
+
+const getFiveUsersWithMostShipments = async (req, res) => {
+  try {
+    const answer = await shipGroupsDao.getFiveUsersWithMostShipments();
     res.json(answer);
   } catch (err) {
     res.status(500).send({ status: 500, detail: err.message });

@@ -110,3 +110,57 @@ export const getShipmentRecentActivity = async () => {
 
 
 };
+
+export const getFiveUsersWithMostShipments = async () => {
+  const pipelineResult = await shipGroupsModel.aggregate([
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'leader',
+        foreignField: 'email',
+        as: 'userArray'
+      }
+    },
+    {
+      $addFields: {
+        user: { $arrayElemAt: ["$userArray", 0] }
+      }
+    },
+    {
+      $addFields: {
+        name: "$user.name"
+      }
+    },
+    {
+      $group: {
+        _id: { leader: "$leader", name: "$name" },
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: {
+        count: -1,
+      },
+    },
+    {
+      $limit: 5,
+    },
+    {
+      $project: {
+        _id: 0,
+        leader: "$_id.leader",
+        name: "$_id.name",
+        count: 1,
+      }
+    }
+  ]);
+
+  // const topFiveUsers = pipelineResult
+  //   .reduce((acc, cur) => {
+  //     acc.push({ leader: cur.leader, amount: cur.count, name: cur.name });
+  //     return acc;
+  //   }, [])
+  //   .sort((a, b) => b.amount - a.amount);
+
+  return { topFiveUsers: pipelineResult };
+};
