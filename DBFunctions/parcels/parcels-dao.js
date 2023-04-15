@@ -13,7 +13,11 @@ export const createParcel = (newParcel) =>
     parcelsModel.create(newParcel);
 
 export const deleteParcel = (id) =>
-    parcelsModel.findByIdAndDelete({_id: id});
+    parcelsModel.findByIdAndDelete({ _id: id });
 
 export const updateParcel = (id, newParcel) =>
-    parcelsModel.findByIdAndUpdate({_id: id}, {$set: newParcel})
+    parcelsModel.findByIdAndUpdate({ _id: id }, { $set: newParcel })
+
+export const countAllParcels = async () => {
+    return { totalParcelsNumber: await parcelsModel.countDocuments({}) };
+}

@@ -3,6 +3,7 @@ import * as usersDao from './users-dao.js';
 // --------------------All users--------------------
 // a. Find - all / by id / by email
 export const UsersController = (app) => {
+    app.get('/users/countNewUser', countNewUsers)
     app.get('/users', findAllUsers);
     app.get('/users/:id', findUserById);
     app.get('/users/email/:email', findUserByEmail);
@@ -98,3 +99,13 @@ const updateUser = async (req, res) => {
         res.status(500).json({ message: `An error occurred while updating the user with ID ${req.params.id}.` });
     }
 }
+
+export const countNewUsers = async (req, res) => {
+    try {
+        const answer = await usersDao.countNewUsers();
+        res.json(answer);
+    } catch (error) {
+        res.status(500).json({ message: "An error occurred while fetching all users." });
+    }
+}
+
