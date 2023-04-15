@@ -81,8 +81,13 @@ export const login = async (req, res) => {
 
 // Profile
 const profile = async (req, res) => {
+    console.log("req");
+    console.log(req);
+    console.log("session");
+    console.log(req.session);
     const currentUser = req.session["currentUser"];
     if (!currentUser) {
+        console.log("Cannot find current user");
         res.sendStatus(404);
         return;
     }
