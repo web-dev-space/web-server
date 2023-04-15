@@ -72,10 +72,10 @@ export const login = async (req, res) => {
         }
 
         // 4. Return success response
+        req.session["currentUser"] = user;
         console.log("Log In");
         console.log("session");
         console.log(req.session);
-        req.session["currentUser"] = user;
         res.json(user);
     } catch (error) {
         res.status(500).json({ message: 'Error logging in' });
