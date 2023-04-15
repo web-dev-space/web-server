@@ -1,5 +1,5 @@
 import * as ShipGroupDao from "../shipGroups/shipGroups-dao.js";
-
+import * as ParcelsDao from "../parcels/parcels-dao.js";
 
 const statisticController = (app) => {
     app.get("/stat/merchant", findDashboardMerchant);
@@ -9,11 +9,26 @@ export default statisticController;
 
 const findDashboardMerchant = async (req, res) => {
     try {
+        const [
+            shipGroupCount,
+            shipmentRecentActivity,
+            fiveLeadersWithMostShipments,
+            fiveUsersWithMostShipments,
+            parcelCount
+        ] = await Promise.all([
+            ShipGroupDao.countAllShipGroups(),
+            ShipGroupDao.getShipmentRecentActivity(),
+            ShipGroupDao.getFiveLeadersWithMostShipments(),
+            ShipGroupDao.getFiveUsersWithMostShipments(),
+            ParcelsDao.countAllParcels()
+        ]);
+
         const answer = {
-            ...await ShipGroupDao.countAllShipGroups(),
-            ...await ShipGroupDao.getShipmentRecentActivity(),
-            ...await ShipGroupDao.getFiveLeadersWithMostShipments(),
-            ...await ShipGroupDao.getFiveUsersWithMostShipments(),
+            ...shipGroupCount,
+            ...shipmentRecentActivity,
+            ...fiveLeadersWithMostShipments,
+            ...fiveUsersWithMostShipments,
+            ...parcelCount
         };
 
         res.json(answer);
