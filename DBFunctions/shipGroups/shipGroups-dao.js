@@ -24,3 +24,81 @@ export const updateShipGroup = async (id, newShipGroup) =>
 export const countAllShipGroups = async () => {
   return { totalShipGroupsNumber: await shipGroupsModel.countDocuments({}) };
 };
+
+export const getShipmentRecentActivity = async () => {
+  const dateLimit = new Date();
+  dateLimit.setDate(dateLimit.getDate() - 7 * 7);
+  return {
+    shipmentRecentActivity: await shipGroupsModel.aggregate([
+      // {
+      //   $match: {
+      //     $expr: {
+      //       $and: [
+      //         { $gte: ["$shipEndDate", dateLimit] },
+      //         { $lte: ["$shipEndDate", new Date()] }
+      //       ]
+      //     }
+      //   },
+      // },
+      {
+        $addFields: {
+          weekAgo: {
+            $floor: {
+              $subtract: [
+                { $divide: [{ $subtract: [new Date(), "$shipEndDate"] }, 86400000 * 7] },
+                0
+              ],
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          // must use `_id` to group and then project
+          _id: { weekAgo: '$weekAgo', route: '$shipRoute' },
+          count: { $sum: 1 }
+        },
+      },
+      {
+        $group: {
+          // The second group stage
+          _id: '$_id.weekAgo',
+          routes: {
+            $push: {
+              route: '$_id.route',
+              count: '$count',
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          "_id": 0,
+          "weekAgo": "$_id",
+          "routes": 1
+        }
+      },
+      {
+        $addFields: {
+          mapFormat: {
+            $arrayToObject: {
+              $map: {
+                input: '$routes',
+                as: 'route',
+                in: [ '$$route.route', '$$route.count' ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          weekAgo: 1,
+          mapFormat: 1
+        }
+      },
+
+    ])
+  };
+};

@@ -8,10 +8,12 @@ import { PostController } from './DBFunctions/posts/posts-controllers.js';
 import { UsersController } from "./DBFunctions/users/users-controllers.js";
 import { AuthController } from "./DBFunctions/users/auth-controller.js";
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import {WarehouseController} from "./DBFunctions/warehouse/warehouse-controller.js";
+import { WarehouseController } from "./DBFunctions/warehouse/warehouse-controller.js";
 import { v2 as cloudinary } from 'cloudinary';
 import ImageController from "./DBFunctions/cloudinary/image-upload-controllers.js";
 import { config as dotenvConfig } from 'dotenv';
+import { getShipmentRecentActivity } from "./DBFunctions/shipGroups/shipGroups-dao.js";
+import { countAllParcels } from "./DBFunctions/parcels/parcels-dao.js";
 
 dotenvConfig();
 
