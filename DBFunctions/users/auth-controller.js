@@ -73,8 +73,8 @@ export const login = async (req, res) => {
 
         // 4. Return success response
         req.session["currentUser"] = user;
+        req.session.save(err => {});
         console.log("Log In");
-        console.log("session");
         console.log(req.session);
         res.json(user);
     } catch (error) {
@@ -85,7 +85,6 @@ export const login = async (req, res) => {
 // Profile
 const profile = async (req, res) => {
     console.log("Profile");
-    console.log("session");
     console.log(req.session);
     const currentUser = req.session["currentUser"];
     if (!currentUser) {
