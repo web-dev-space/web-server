@@ -42,7 +42,8 @@ app.use(
         resave: false,
         saveUninitialized: true,
         cookie: {
-            secure: false,
+            secure: true,
+            sameSite: "none",
         },
     })
 );
@@ -51,7 +52,7 @@ app.use(
 app.use(
     cors({
         credentials: true,
-        origin: [/^https:\/\/.*\.netlify\.app$/, "http://localhost:3000"],
+        origin: [/^https:\/\/.*\.netlify\.app$/, "http://localhost:3000", "https://localhost:3000"],
     })
 );
 
@@ -62,6 +63,8 @@ app.use('/tracking', createProxyMiddleware({
         '^/tracking': '/v1',
     },
 }));
+
+app.set('trust proxy', true)
 
 
 // -------------Controllers----------------
