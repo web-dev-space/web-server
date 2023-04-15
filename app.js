@@ -52,7 +52,7 @@ app.use(
 app.use(
     cors({
         credentials: true,
-        origin: [/^https:\/\/.*\.netlify\.app$/, "http://localhost:3000"],
+        origin: [/^https:\/\/.*\.netlify\.app$/, "http://localhost:3000", "https://localhost:3000"],
     })
 );
 
