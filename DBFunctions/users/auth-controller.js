@@ -8,11 +8,11 @@ import * as usersDao from "./users-dao.js";
 
 
 export const AuthController = (app) => {
-    app.post('/users/signup', signup);
-    app.post('/users/login', login);
-    app.put('/users/changePassword', changePassword);
-    app.post("/users/profile", profile);
-    app.post("/users/logout",  logout);
+    app.post('/auth/signup', signup);
+    app.post('/auth/login', login);
+    app.put('/auth/changePassword', changePassword);
+    app.post("/auth/profile", profile);
+    app.post("/auth/logout",  logout);
 }
 
 // Sign up -- enter [name, email, password, role], return [newUser]
