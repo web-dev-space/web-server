@@ -64,6 +64,8 @@ app.use('/tracking', createProxyMiddleware({
     },
 }));
 
+app.set('trust proxy', true)
+
 
 // -------------Controllers----------------
 ParcelsController(app);
