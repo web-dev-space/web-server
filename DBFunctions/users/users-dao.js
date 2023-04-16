@@ -172,3 +172,15 @@ export const countRecentRegister = async (type) => {
   return { recentActivity: recentActivity };
 
 }
+
+export const countRecentRegisterAllTypes = async () => {
+  const [weekly, monthly] = await Promise.all([
+    countRecentRegister('weekly'),
+    countRecentRegister('monthly'),
+  ]);
+
+  return {
+    countRecentRegisterWeekly: weekly.recentActivity,
+    countRecentRegisterMonthly: monthly.recentActivity
+  };
+};

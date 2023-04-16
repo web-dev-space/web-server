@@ -205,7 +205,7 @@ export const getFiveUsersWithMostShipments = async () => {
   return { topFiveUsers: topFiveUsers };
 };
 
-export const countRecentRegister = async (type) => {
+export const countRecentFormedShipGroup = async (type) => {
   const multi = type === 'monthly' ? 30 : 7;
 
   const dateLimit = new Date();
@@ -286,3 +286,15 @@ export const countRecentRegister = async (type) => {
   return { recentActivity: recentActivity };
 
 }
+
+export const countRecentFormedShipGroupAll = async () => {
+  const [activityWeekly, activityMonthly] = await Promise.all([
+    countRecentFormedShipGroup('weekly'),
+    countRecentFormedShipGroup('monthly')
+  ]);
+
+  return {
+    activityWeekly: activityWeekly.recentActivity,
+    activityMonthly: activityMonthly.recentActivity,
+  }
+};
