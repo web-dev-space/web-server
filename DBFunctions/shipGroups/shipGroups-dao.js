@@ -76,11 +76,10 @@ export const getShipmentRecentActivity = async (type) => {
 
   const xList = type === 'monthly' ? [9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
 
-  let temp = {};
-
-  for (let i = 0; i < routesList.length; i++) {
-    temp[routesList[i]] = new Array(xList.length).fill(0);
-  }
+  const temp = routesList.reduce((acc, route) => {
+    acc[route] = new Array(xList.length).fill(0);
+    return acc;
+  }, {});
 
   pipelineResult.forEach((item) => {
     const idx = xList.indexOf(item.weekAgo);
