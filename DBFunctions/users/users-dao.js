@@ -1,4 +1,5 @@
 import { buyerModel, merchantModel, adminModel, userModel } from './users-model.js';
+import getLastSevenWeekDates from '../utils/getLastSevenWeekDates.js';
 
 export const findAllUsers = async () => {
   const buyers = await findAllBuyers().exec();
@@ -120,7 +121,7 @@ export const countRecentRegister = async (type) => {
                         { dateString: '2023-04-16' }
                     }
                     , "$created"]
-                }, 86400000 * 7]
+                }, 86400000 * multi]
               },
               0
             ],
@@ -145,9 +146,6 @@ export const countRecentRegister = async (type) => {
     },
   ]).exec();
 
-  console.log("pipelineResult", pipelineResult);
-
-
   const xList = type === 'monthly' ? [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
 
   const data = new Array(xList.length).fill(0);
@@ -159,12 +157,24 @@ export const countRecentRegister = async (type) => {
     }
   });
 
+  const monthList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  const rotateArray = (arr, index) => {
+    if (index === -1) {
+      return arr;
+    }
+    return arr.slice(index, arr.length).concat(arr.slice(0, index));
+  }
+
+  const xValues = type === 'weekly'
+    ? getLastSevenWeekDates()
+    : rotateArray(monthList, new Date().getMonth() + 1);
+
   const recentActivity = {
-    xValues: xList,
+    xValues: xValues,
     yValues: data,
   };
 
   return { recentActivity: recentActivity };
-
 
 }
