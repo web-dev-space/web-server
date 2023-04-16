@@ -12,8 +12,6 @@ import { WarehouseController } from "./DBFunctions/warehouse/warehouse-controlle
 import { v2 as cloudinary } from 'cloudinary';
 import ImageController from "./DBFunctions/cloudinary/image-upload-controllers.js";
 import { config as dotenvConfig } from 'dotenv';
-import { getShipmentRecentActivity } from "./DBFunctions/shipGroups/shipGroups-dao.js";
-import { countAllParcels } from "./DBFunctions/parcels/parcels-dao.js";
 import statisticController from "./DBFunctions/statistic/statistic-controller.js";
 
 dotenvConfig();

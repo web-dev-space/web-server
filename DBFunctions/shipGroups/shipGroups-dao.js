@@ -25,9 +25,12 @@ export const countAllShipGroups = async () => {
   return { totalShipGroupsNumber: await shipGroupsModel.countDocuments({}) };
 };
 
-export const getShipmentRecentActivity = async () => {
+
+export const getShipmentRecentActivity = async (type) => {
+  const multi = type === 'monthly' ? 30 : 7;
+
   const dateLimit = new Date();
-  dateLimit.setDate(dateLimit.getDate() - 7 * 7);
+  dateLimit.setDate(dateLimit.getDate() - 7 * multi);
   const pipelineResult = await shipGroupsModel.aggregate([
     {
       $match: {
@@ -44,7 +47,7 @@ export const getShipmentRecentActivity = async () => {
         weekAgo: {
           $floor: {
             $subtract: [
-              { $divide: [{ $subtract: [new Date(), "$shipEndDate"] }, 86400000 * 7] },
+              { $divide: [{ $subtract: [new Date(), "$shipEndDate"] }, 86400000 * multi] },
               0
             ],
           },
@@ -59,57 +62,54 @@ export const getShipmentRecentActivity = async () => {
       },
     },
     {
-      $group: {
-        // The second group stage
-        _id: '$_id.weekAgo',
-        routes: {
-          $push: {
-            route: '$_id.route',
-            count: '$count',
-          },
-        },
-      },
-    },
-    {
-      $project: {
-        "_id": 0,
-        "weekAgo": "$_id",
-        "routes": 1
-      }
-    },
-    {
-      $addFields: {
-        mapFormat: {
-          $arrayToObject: {
-            $map: {
-              input: '$routes',
-              as: 'route',
-              in: ['$$route.route', '$$route.count'],
-            },
-          },
-        },
-      },
-    },
-    {
       $project: {
         _id: 0,
-        weekAgo: 1,
-        mapFormat: 1
+        weekAgo: "$_id.weekAgo",
+        route: "$_id.route",
+        count: 1,
       }
     },
+  ]).exec();
 
 
+  const routesList = ['Air Standard', 'Air Sensitive', "Sea Standard", "Sea Sensitive"];
+
+  const xList = type === 'monthly' ? [9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
+
+  let temp = {};
+
+  for (let i = 0; i < routesList.length; i++) {
+    temp[routesList[i]] = new Array(xList.length).fill(0);
+  }
+
+  pipelineResult.forEach((item) => {
+    const idx = xList.indexOf(item.weekAgo);
+    if (idx >= 0) {
+      temp[item.route][idx] = item.count;
+    }
+  });
+
+  const recentActivity = routesList.map((route) => {
+    return {
+      route: route,
+      data: temp[route]
+    }
+  });
+
+  return { recentActivity: recentActivity };
+};
+
+export const getShipmentRecentActivityAll = async () => {
+  const [activityWeekly, activityMonthly] = await Promise.all([
+    getShipmentRecentActivity('weekly'),
+    getShipmentRecentActivity('monthly')
   ]);
 
   return {
-    recentActivity: pipelineResult.reduce((acc, cur) => {
-      acc[cur.weekAgo] = cur.mapFormat;
-      return acc;
-    }, {})
+    activityWeekly: activityWeekly.recentActivity,
+    activityMonthly: activityMonthly.recentActivity,
   }
-
-
-};
+}
 
 export const getFiveLeadersWithMostShipments = async () => {
   const pipelineResult = await shipGroupsModel.aggregate([

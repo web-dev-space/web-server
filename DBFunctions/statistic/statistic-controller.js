@@ -17,7 +17,7 @@ const findDashboardMerchant = async (req, res) => {
             parcelCount
         ] = await Promise.all([
             ShipGroupDao.countAllShipGroups(),
-            ShipGroupDao.getShipmentRecentActivity(),
+            ShipGroupDao.getShipmentRecentActivityAll(),
             ShipGroupDao.getFiveLeadersWithMostShipments(),
             ShipGroupDao.getFiveUsersWithMostShipments(),
             ParcelsDao.countAllParcels()
