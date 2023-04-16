@@ -13,7 +13,7 @@ export const AuthController = (app) => {
     app.put('/auth/changePassword', changePassword);
     app.post("/auth/profile", profile);
     app.post("/auth/logout",  logout);
-    app.put("/auth/update", update)
+    app.put("/auth/update", update);
 }
 
 // Sign up -- enter [name, email, password, role], return [newUser]
