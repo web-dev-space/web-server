@@ -4,6 +4,7 @@ import * as usersDao from './users-dao.js';
 // a. Find - all / by id / by email
 export const UsersController = (app) => {
     app.get('/users/countNewUser', countNewUsers)
+    app.get('/users/countRecentRegister', countRecentRegister)
     app.get('/users', findAllUsers);
     app.get('/users/:id', findUserById);
     app.get('/users/email/:email', findUserByEmail);
@@ -109,3 +110,12 @@ export const countNewUsers = async (req, res) => {
     }
 }
 
+export const countRecentRegister = async (req, res) => {
+    try {
+        const answer = await usersDao.countRecentRegister();
+        res.json(answer);
+    } catch (error) {
+        res.status(500).json({ message: error?.message });
+        // res.status(500).json({ message: "An error occurred while counting recent register users" });
+    }
+}
