@@ -74,7 +74,7 @@ export const getShipmentRecentActivity = async (type) => {
 
   const routesList = ['Air Standard', 'Air Sensitive', "Sea Standard", "Sea Sensitive"];
 
-  const xList = type === 'monthly' ? [9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
+  const xList = type === 'monthly' ? [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
 
   const temp = routesList.reduce((acc, route) => {
     acc[route] = new Array(xList.length).fill(0);
