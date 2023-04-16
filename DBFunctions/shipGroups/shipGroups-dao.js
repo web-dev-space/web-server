@@ -294,7 +294,7 @@ export const countRecentFormedShipGroupAll = async () => {
   ]);
 
   return {
-    activityWeekly: activityWeekly.recentActivity,
-    activityMonthly: activityMonthly.recentActivity,
+    recentFormedShipGroupWeekly: activityWeekly.recentActivity,
+    recentFormedShipGroupMonthly: activityMonthly.recentActivity,
   }
 };
