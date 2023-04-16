@@ -140,7 +140,7 @@ export const update = async (req, res) => {
 
     // Check if user logged in
     const currentUser = req.session["currentUser"];
-    const updatedUser = req.body;
+    const update = req.body;
     if (!currentUser) {
         res.sendStatus(404);
         return;
@@ -151,15 +151,15 @@ export const update = async (req, res) => {
 
     // Update user object - based on role
     if (role === 'buyer') {
-        updatedUser = await usersDao.updateBuyer(id, updatedUser)
+        updatedUser = await usersDao.updateBuyer(id, update)
             .then(() => usersDao.findBuyerById(id));
     }
     else if (role === 'merchant') {
-        updatedUser = await usersDao.updateMerchant(id, updatedUser)
+        updatedUser = await usersDao.updateMerchant(id, update)
             .then(() => usersDao.findMerchantById(id));
     }
     else if (role === 'admin') {
-        updatedUser = await usersDao.updateAdmin(id, updatedUser)
+        updatedUser = await usersDao.updateAdmin(id, update)
             .then(() => usersDao.findAdminById(id));
     }
     // 4. Update session and return.
