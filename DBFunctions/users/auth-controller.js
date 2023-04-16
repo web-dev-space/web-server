@@ -13,6 +13,7 @@ export const AuthController = (app) => {
     app.put('/auth/changePassword', changePassword);
     app.post("/auth/profile", profile);
     app.post("/auth/logout",  logout);
+    app.put("/auth/update", update);
 }
 
 // Sign up -- enter [name, email, password, role], return [newUser]
@@ -132,6 +133,39 @@ export const changePassword = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error changing password' });
     }
+};
+
+// Update
+export const update = async (req, res) => {
+
+    // Check if user logged in
+    const currentUser = req.session["currentUser"];
+    const update = req.body;
+    if (!currentUser) {
+        res.sendStatus(404);
+        return;
+    }
+    const id = currentUser._id;
+    const role = currentUser.role;
+    let updatedUser = null;
+
+    // Update user object - based on role
+    if (role === 'buyer') {
+        updatedUser = await usersDao.updateBuyer(id, update)
+            .then(() => usersDao.findBuyerById(id));
+    }
+    else if (role === 'merchant') {
+        updatedUser = await usersDao.updateMerchant(id, update)
+            .then(() => usersDao.findMerchantById(id));
+    }
+    else if (role === 'admin') {
+        updatedUser = await usersDao.updateAdmin(id, update)
+            .then(() => usersDao.findAdminById(id));
+    }
+    // 4. Update session and return.
+    req.session["currentUser"] = updatedUser;
+    req.session.save(err => {});
+    res.json(updatedUser);
 };
 
 
