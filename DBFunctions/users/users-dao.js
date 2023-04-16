@@ -115,12 +115,7 @@ export const countRecentRegister = async (type) => {
             $subtract: [
               {
                 $divide: [{
-                  $subtract: [
-                    {
-                      $dateFromString:
-                        { dateString: '2023-04-16' }
-                    }
-                    , "$created"]
+                  $subtract: [new Date(), "$created"]
                 }, 86400000 * multi]
               },
               0
@@ -132,15 +127,14 @@ export const countRecentRegister = async (type) => {
     {
       $group: {
         // must use `_id` to group and then project
-        _id: { weekAgo: '$weekAgo', route: '$shipRoute' },
-        count: { $sum: 1 }
+        _id: { weekAgo: '$weekAgo' },
+        count: { $sum: 1 },
       },
     },
     {
       $project: {
         _id: 0,
         weekAgo: "$_id.weekAgo",
-        route: "$_id.route",
         count: 1,
       }
     },

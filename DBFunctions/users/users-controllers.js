@@ -118,7 +118,6 @@ const generate_countRecentRegister = (type) => {
             res.json(answer);
         } catch (error) {
             res.status(500).json({ message: error?.message });
-            // res.status(500).json({ message: "An error occurred while counting recent register users" });
         }
     }
 }
