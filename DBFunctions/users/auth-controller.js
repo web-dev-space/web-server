@@ -136,10 +136,11 @@ export const changePassword = async (req, res) => {
 };
 
 // Update
-export const update = asyc (req, res) => {
+export const update = async (req, res) => {
 
     // Check if user logged in
     const currentUser = req.session["currentUser"];
+    const updatedUser = req.body;
     if (!currentUser) {
         res.sendStatus(404);
         return;
