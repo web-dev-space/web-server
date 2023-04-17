@@ -63,6 +63,11 @@ app.use('/tracking', createProxyMiddleware({
     pathRewrite: {
         '^/tracking': '/v1',
     },
+    on: {
+        error: (err, req, res) => {
+          console.log(err);
+        },
+    },
 }));
 
 app.set('trust proxy', true)
