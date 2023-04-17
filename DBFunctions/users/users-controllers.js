@@ -4,6 +4,8 @@ import * as usersDao from './users-dao.js';
 // a. Find - all / by id / by email
 export const UsersController = (app) => {
     app.get('/users/countNewUser', countNewUsers)
+    app.get('/users/countRecentRegister/monthly', generate_countRecentRegister('monthly'))
+    app.get('/users/countRecentRegister/weekly', generate_countRecentRegister('weekly'))
     app.get('/users', findAllUsers);
     app.get('/users/:id', findUserById);
     app.get('/users/email/:email', findUserByEmail);
@@ -75,7 +77,7 @@ const updateUser = async (req, res) => {
         // Get original user object
         const user = await usersDao.findUserById(idToUpdate);
         if (!user) {
-            res.status(404).json({ message: `User with ID ${idToUpdate} not found.` });
+            res.status(404).json({ message: `User with ID ${idToUpdate !== undefined ? idToUpdate : 'undefined'} not found.` });
             return;
         }
         const role = user.role;
@@ -109,3 +111,13 @@ export const countNewUsers = async (req, res) => {
     }
 }
 
+const generate_countRecentRegister = (type) => {
+    return async (req, res) => {
+        try {
+            const answer = await usersDao.countRecentRegister(type);
+            res.json(answer);
+        } catch (error) {
+            res.status(500).json({ message: error?.message });
+        }
+    }
+}
