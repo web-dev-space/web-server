@@ -13,6 +13,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import ImageController from "./DBFunctions/cloudinary/image-upload-controllers.js";
 import { config as dotenvConfig } from 'dotenv';
 import statisticController from "./DBFunctions/statistic/statistic-controller.js";
+import TrackParcelController from "./DBFunctions/tracking/track-parcel-controller.js";
 
 dotenvConfig();
 
@@ -82,5 +83,6 @@ AuthController(app);
 WarehouseController(app);
 ImageController(app);
 statisticController(app);
+TrackParcelController(app);
 
 app.listen(4000)
