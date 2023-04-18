@@ -21,7 +21,9 @@ const findAllPosts = async (req, res) => {
 const findPostById = async (req, res) => {
   try {
     const idToFind = req.params.id;
-    const post = await postsDao.findPostById(idToFind);
+    let post = await postsDao.findPostById(idToFind);
+    post.viewsAmount = post.viewsAmount + 1;
+    await postsDao.updatePost(idToFind, post);
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: `An error occurred while fetching the post with ID ${idToFind}.` });
