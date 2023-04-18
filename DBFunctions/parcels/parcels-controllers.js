@@ -1,4 +1,5 @@
 import * as parcelsDao from './parcels-dao.js';
+import * as shipGroupsDao from '../shipGroups/shipGroups-dao.js';
 
 export const ParcelsController = (app) => {
     app.get('/parcels/count', countAllParcels);
@@ -80,9 +81,14 @@ const updateParcel = async (req, res) => {
     try {
         const idToUpdate = req.params.id;
         const updatedParcel = req.body;
-        const status = await parcelsDao.updateParcel(idToUpdate, updatedParcel)
-            .then(() => parcelsDao.findParcelById(idToUpdate));
-        res.json(status);
+        await parcelsDao.updateParcel(idToUpdate, updatedParcel)
+        const newParcel = await parcelsDao.findParcelById(idToUpdate);
+        if (newParcel.shipGroup) {
+            const shipGroup = await shipGroupsDao.findShipGroupById(newParcel.shipGroup);
+            await shipGroupsDao.addTotalWeight(shipGroup)
+        };
+
+        res.json(newParcel);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
