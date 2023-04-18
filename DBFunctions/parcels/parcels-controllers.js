@@ -1,10 +1,32 @@
 import * as parcelsDao from './parcels-dao.js';
 
+export const ParcelsController = (app) => {
+    app.get('/parcels/count', countAllParcels);
+    app.get('/parcels', findAllParcels);
+    app.get('/parcels/:id', findParcelById);
+    app.get('/parcels/trackingNumber/:trackingNumber', findParcelByTrackingNumber);
+    app.post('/parcels', createParcel);
+    app.delete('/parcels/:id', deleteParcel);
+    app.put('/parcels/:id', updateParcel);
+}
+
 
 // Find - all / by id / by trackingNumber
 const findAllParcels = async (req, res) => {
     try {
-        const parcels = await parcelsDao.findAllParcels();
+        const shipGroupId = req?.query?.shipGroupId;
+        const userEmail = req?.query?.userEmail;
+
+        let parcels;
+
+        if (shipGroupId && userEmail) {
+            parcels = await parcelsDao.findParcelsInShipGroupAndCurrentUser(shipGroupId, userEmail);
+        } else if (shipGroupId) {
+            parcels = await parcelsDao.findParcelsInShipGroup(shipGroupId);
+        } else {
+            parcels = await parcelsDao.findAllParcels();
+        }
+
         res.json(parcels);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -74,14 +96,3 @@ const countAllParcels = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-
-export const ParcelsController = (app) => {
-    app.get('/parcels/count', countAllParcels);
-    app.get('/parcels', findAllParcels);
-    app.get('/parcels/:id', findParcelById);
-    app.get('/parcels/trackingNumber/:trackingNumber', findParcelByTrackingNumber);
-    app.post('/parcels', createParcel);
-    app.delete('/parcels/:id', deleteParcel);
-    app.put('/parcels/:id', updateParcel);
-}

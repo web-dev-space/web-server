@@ -1,4 +1,5 @@
 import parcelsModel from './parcels-model.js';
+import mongoose from 'mongoose';
 
 export const findAllParcels = () =>
     parcelsModel.find();
@@ -21,3 +22,11 @@ export const updateParcel = (id, newParcel) =>
 export const countAllParcels = async () => {
     return { totalParcelsNumber: await parcelsModel.countDocuments({}) };
 }
+
+export const findParcelsInShipGroup = async (shipGroupId) => {
+    return await parcelsModel.find({ shipGroup: shipGroupId }).exec();
+}
+
+export const findParcelsInShipGroupAndCurrentUser = async (shipGroupId, userEmail) => {
+    return await parcelsModel.find({ shipGroup: shipGroupId, user: userEmail }).exec();
+};
