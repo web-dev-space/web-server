@@ -1,5 +1,7 @@
 import shipGroupsModel from "./shipGroups-model.js";
 import getLastSevenWeekDates from '../utils/getLastSevenWeekDates.js';
+import ParcelModel from '../parcels/parcels-model.js';
+import mongoose from "mongoose";
 
 export const findAllShipGroups = async () => await shipGroupsModel.find();
 
@@ -297,4 +299,52 @@ export const countRecentFormedShipGroupAll = async () => {
     recentFormedShipGroupWeekly: activityWeekly.recentActivity,
     recentFormedShipGroupMonthly: activityMonthly.recentActivity,
   }
+};
+
+
+export const getTotalWeight = async function (shipGroupId) {
+  const result = await ParcelModel.aggregate([
+    {
+      $match: {
+        shipGroup: shipGroupId,
+        weight: { $exists: true }
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalWeight: { $sum: '$weight' },
+      },
+    },
+    {
+      $project: { _id: 0 },
+    },
+  ]);
+
+  if (result.length > 0) {
+    return result[0].totalWeight;
+  } else {
+    return 0;
+  }
+};
+
+export const addTotalWeight = async (shipGroup) => {
+  const totalWeight = await getTotalWeight(shipGroup._id.toString());
+
+  if (totalWeight !== null) {
+    await shipGroupsModel.updateOne({ _id: shipGroup._id }, { totalWeight: totalWeight });
+  }
+}
+
+export const calAndAddTotalWeightToAllShipGroups = async () => {
+  const shipGroups = await shipGroupsModel.find({}).exec();
+
+  await Promise.all(
+    shipGroups.map(async (shipGroup) => {
+      await addTotalWeight(shipGroup);
+    })
+  );
+
+  return shipGroupsModel.find({}).exec();
+
 };
