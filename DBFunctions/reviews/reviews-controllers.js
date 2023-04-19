@@ -1,6 +1,7 @@
 import * as reviewsDao from "./reviews-dao.js";
 
 export const ReviewController = (app) => {
+  app.get("/reviews/project/:projectId", findReviewsForProject);
   app.get("/reviews", findAllReviews);
   app.get("/reviews/:id", findReviewById);
   app.post("/reviews", createReview);
@@ -19,8 +20,9 @@ const findAllReviews = async (req, res) => {
 };
 
 const findReviewById = async (req, res) => {
+  let idToFind;
   try {
-    const idToFind = req.params.id;
+    idToFind = req.params.id;
     let review = await reviewsDao.findReviewById(idToFind);
     review.viewsAmount = review.viewsAmount + 1;
     await reviewsDao.updateReview(idToFind, review);
@@ -43,8 +45,9 @@ const createReview = async (req, res) => {
 
 // Delete -- return null when unsuccessful
 const deleteReview = async (req, res) => {
+  let idToDelete;
   try {
-    const idToDelete = req.params.id;
+    idToDelete = req.params.id;
     const status = await reviewsDao.deleteReview(idToDelete);
     res.json(status);
   } catch (error) {
@@ -54,13 +57,25 @@ const deleteReview = async (req, res) => {
 
 // Update
 const updateReview = async (req, res) => {
+  let idToUpdate;
   try {
-    const idToUpdate = req.params.id;
+    idToUpdate = req.params.id;
     const updatedReview = req.body;
     await reviewsDao.updateReview(idToUpdate, updatedReview);
     const review = await reviewsDao.findReviewById(idToUpdate);
     res.json(review);
   } catch (error) {
     res.status(500).json({ message: `An error occurred while updating the review with ID ${idToUpdate || 'undefined'}.` });
+  }
+};
+
+const findReviewsForProject = async (req, res) => {
+  let projectId;
+  try {
+    projectId = req.params.projectId;
+    const reviews = await reviewsDao.findReviewsForProject(projectId);
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: `An error occurred while fetching the reviews for project with ID ${projectId || 'undefined'}.` });
   }
 };
