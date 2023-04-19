@@ -28,8 +28,6 @@ export const findParcelsInShipGroup = async (shipGroupId) => {
         ? new mongoose.Types.ObjectId(shipGroupId)
         : null;
 
-    console.log('search for', objectId ? [shipGroupId, objectId] : [shipGroupId]);
-
     const query = {
         shipGroup: { $in: objectId ? [shipGroupId, objectId] : [shipGroupId] },
     };
