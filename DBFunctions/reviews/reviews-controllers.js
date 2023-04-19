@@ -3,7 +3,7 @@ import * as reviewsDao from "./reviews-dao.js";
 export const ReviewController = (app) => {
   app.get("/reviews", findAllReviews);
   app.get("/reviews/:id", findReviewById);
-  app.review("/reviews", createReview);
+  app.post("/reviews", createReview);
   app.delete("/reviews/:id", deleteReview);
   app.put("/reviews/:id", updateReview);
 };

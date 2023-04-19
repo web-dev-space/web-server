@@ -14,6 +14,7 @@ import ImageController from "./DBFunctions/cloudinary/image-upload-controllers.j
 import { config as dotenvConfig } from 'dotenv';
 import statisticController from "./DBFunctions/statistic/statistic-controller.js";
 import TrackParcelController from "./DBFunctions/tracking/track-parcel-controller.js";
+import { ReviewController } from "./DBFunctions/reviews/reviews-controllers.js";
 
 dotenvConfig();
 
@@ -66,7 +67,7 @@ app.use('/tracking', createProxyMiddleware({
     },
     on: {
         error: (err, req, res) => {
-          console.log(err);
+            console.log(err);
         },
     },
 }));
@@ -84,5 +85,6 @@ WarehouseController(app);
 ImageController(app);
 statisticController(app);
 TrackParcelController(app);
+ReviewController(app);
 
 app.listen(4000)
