@@ -14,6 +14,7 @@ import ImageController from "./DBFunctions/cloudinary/image-upload-controllers.j
 import { config as dotenvConfig } from 'dotenv';
 import statisticController from "./DBFunctions/statistic/statistic-controller.js";
 import TrackParcelController from "./DBFunctions/tracking/track-parcel-controller.js";
+import ProductSearchController from "./DBFunctions/productSearch/product-search-controller.js";
 
 dotenvConfig();
 
@@ -84,5 +85,6 @@ WarehouseController(app);
 ImageController(app);
 statisticController(app);
 TrackParcelController(app);
+ProductSearchController(app);
 
 app.listen(4000)
