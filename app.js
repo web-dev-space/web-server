@@ -15,6 +15,7 @@ import { config as dotenvConfig } from 'dotenv';
 import statisticController from "./DBFunctions/statistic/statistic-controller.js";
 import TrackParcelController from "./DBFunctions/tracking/track-parcel-controller.js";
 import { ReviewController } from "./DBFunctions/reviews/reviews-controllers.js";
+import ProductSearchController from "./DBFunctions/productSearch/product-search-controller.js";
 
 dotenvConfig();
 
@@ -86,5 +87,6 @@ ImageController(app);
 statisticController(app);
 TrackParcelController(app);
 ReviewController(app);
+ProductSearchController(app);
 
 app.listen(4000)
