@@ -14,6 +14,7 @@ export const ShipGroupsController = (app) => {
     "/shipGroups/trackingNumber/:trackingNumber",
     findShipGroupByTrackingNumber
   );
+  app.post("/shipGroups/updateTotalWeight", calAndAddTotalWeightToAllShipGroups);
   app.post("/shipGroups", createShipGroup);
   app.delete("/shipGroups/:id", deleteShipGroup);
   app.put("/shipGroups/:id", updateShipGroup);
@@ -145,3 +146,12 @@ const generate_countRecentRegister = (type) => {
     }
   }
 }
+
+const calAndAddTotalWeightToAllShipGroups = async (req, res) => {
+  try {
+    const answer = await shipGroupsDao.calAndAddTotalWeightToAllShipGroups();
+    res.json(answer);
+  } catch (err) {
+    res.status(500).send({ status: 500, detail: err.message });
+  }
+};
