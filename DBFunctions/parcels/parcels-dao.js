@@ -24,25 +24,18 @@ export const countAllParcels = async () => {
 }
 
 export const findParcelsInShipGroup = async (shipGroupId) => {
-    const findByString = parcelsModel.find({ shipGroup: shipGroupId }).exec();
-
     const objectId = mongoose.Types.ObjectId.isValid(shipGroupId)
         ? new mongoose.Types.ObjectId(shipGroupId)
         : null;
 
-    console.log('objectId: ', objectId);
+    console.log('search for', objectId ? [shipGroupId, objectId] : [shipGroupId]);
 
-    if (objectId === null) {
-        return await findByString;
-    } else {
-        const findByObjectId = parcelsModel.find({ shipGroup: objectId }).exec();
-        const [resultByString, resultByObjectId] = await Promise.all([findByString, findByObjectId])
-        console.log('resultByString: ', resultByString);
-        console.log('resultByObjectId: ', resultByObjectId);
-        return [...resultByString, ...resultByObjectId];
-    }
-}
+    const query = {
+        shipGroup: { $in: objectId ? [shipGroupId, objectId] : [shipGroupId] },
+    };
 
+    return await parcelsModel.find(query).exec();
+};
 
 export const findParcelsInShipGroupAndCurrentUser = async (shipGroupId, userEmail) => {
     return await parcelsModel.find({ shipGroup: shipGroupId, user: userEmail }).exec();
