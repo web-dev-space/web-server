@@ -5,9 +5,15 @@ const ProductSearchController = (app) => {
     app.get("/products/details/:asinID", getProductDetails);
 };
 
+const cache = {};
+
 const searchProducts = async (req, res) => {
     const searchText = req.params.searchText;
     try {
+        if (cache[searchText]) {
+            return res.json(cache[searchText]);
+        }
+
         // set up the request parameters
         const params = {
             api_key: process.env.REACT_API_AMAZON_PRODUCT_KEY,
@@ -18,8 +24,12 @@ const searchProducts = async (req, res) => {
         }
         // make the http GET request to ASIN Data API
         const response = await axios.get('https://api.asindataapi.com/request', { params });
+
+        const answer = response.data.search_results;
+        cache[searchText] = answer;
+
         // print the JSON response from ASIN Data API
-        res.json(response.data.search_results);
+        res.json(answer);
     } catch (e) {
         // catch and print the error
         console.error("error in searchProducts", e, e?.response?.data);
@@ -29,6 +39,10 @@ const searchProducts = async (req, res) => {
 const getProductDetails = async (req, res) => {
     const asinID = req.params.asinID;
     try {
+        if (cache[asinID]) {
+            return res.json(cache[asinID]);
+        }
+
         // set up the request parameters
         const params = {
             api_key: process.env.REACT_API_AMAZON_PRODUCT_KEY,
@@ -38,8 +52,12 @@ const getProductDetails = async (req, res) => {
         }
         // make the http GET request to ASIN Data API
         const response = await axios.get('https://api.asindataapi.com/request', { params });
+
+        const answer = response.data.product;
+        cache[asinID] = answer;
+
         // print the JSON response from ASIN Data API
-        res.json(response.data.product);
+        res.json(answer);
     } catch (e) {
         // catch and print the error
         console.error("error in getProductDetails", e, e?.response?.data);
