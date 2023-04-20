@@ -16,13 +16,17 @@ const findDashboardMerchant = async (req, res) => {
             shipmentRecentActivity,
             fiveLeadersWithMostShipments,
             fiveUsersWithMostShipments,
-            parcelCount
+            parcelCount,
+            groupShippedCount,
+            shipmentRecentActivityNoGroup,
         ] = await Promise.all([
             ShipGroupDao.countAllShipGroups(),
             ShipGroupDao.getShipmentRecentActivityAll(),
             ShipGroupDao.getFiveLeadersWithMostShipments(),
             ShipGroupDao.getFiveUsersWithMostShipments(),
             ParcelsDao.countAllParcels(),
+            ShipGroupDao.countAllGroupShipped(),
+            ShipGroupDao.getShipmentRecentActivityNoGroup(),
         ]);
 
         const answer = {
@@ -30,7 +34,9 @@ const findDashboardMerchant = async (req, res) => {
             ...shipmentRecentActivity,
             ...fiveLeadersWithMostShipments,
             ...fiveUsersWithMostShipments,
-            ...parcelCount
+            ...parcelCount,
+            ...groupShippedCount,
+            ...shipmentRecentActivityNoGroup,
         };
 
         res.json(answer);
@@ -50,6 +56,8 @@ const findDashboardAdmin = async (req, res) => {
             newUserCount,
             countRecentRegisterUser,
             countRecentFormedShipGroup,
+            groupShippedCount,
+            shipmentRecentActivityNoGroup,
         ] = await Promise.all([
             ShipGroupDao.countAllShipGroups(),
             ShipGroupDao.getShipmentRecentActivityAll(),
@@ -59,6 +67,8 @@ const findDashboardAdmin = async (req, res) => {
             UsersDao.countNewUsers(),
             UsersDao.countRecentRegisterAllTypes(),
             ShipGroupDao.countRecentFormedShipGroupAll(),
+            ShipGroupDao.countAllGroupShipped(),
+            ShipGroupDao.getShipmentRecentActivityNoGroup(),
         ]);
 
         const answer = {
@@ -70,6 +80,8 @@ const findDashboardAdmin = async (req, res) => {
             ...newUserCount,
             ...countRecentRegisterUser,
             ...countRecentFormedShipGroup,
+            ...groupShippedCount,
+            ...shipmentRecentActivityNoGroup,
         };
 
         res.json(answer);
