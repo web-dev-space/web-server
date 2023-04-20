@@ -19,8 +19,9 @@ const findAllPosts = async (req, res) => {
 };
 
 const findPostById = async (req, res) => {
+  let idToFind;
   try {
-    const idToFind = req.params.id;
+    idToFind = req.params.id;
     let post = await postsDao.findPostById(idToFind);
     post.viewsAmount = post.viewsAmount + 1;
     await postsDao.updatePost(idToFind, post);
@@ -43,8 +44,9 @@ const createPost = async (req, res) => {
 
 // Delete -- return null when unsuccessful
 const deletePost = async (req, res) => {
+  let idToDelete;
   try {
-    const idToDelete = req.params.id;
+    idToDelete = req.params.id;
     const status = await postsDao.deletePost(idToDelete);
     res.json(status);
   } catch (error) {
@@ -54,8 +56,9 @@ const deletePost = async (req, res) => {
 
 // Update
 const updatePost = async (req, res) => {
+  let idToUpdate;
   try {
-    const idToUpdate = req.params.id;
+    idToUpdate = req.params.id;
     const updatedPost = req.body;
     await postsDao.updatePost(idToUpdate, updatedPost);
     const post = await postsDao.findPostById(idToUpdate);
