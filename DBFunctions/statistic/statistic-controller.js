@@ -1,6 +1,7 @@
 import * as ShipGroupDao from "../shipGroups/shipGroups-dao.js";
 import * as ParcelsDao from "../parcels/parcels-dao.js";
 import * as UsersDao from "../users/users-dao.js";
+import * as PostDao from "../posts/posts-dao.js";
 
 const statisticController = (app) => {
     app.get("/stat/merchant", findDashboardMerchant);
@@ -9,41 +10,47 @@ const statisticController = (app) => {
 
 export default statisticController;
 
-const findDashboardMerchant = async (req, res) => {
-    try {
-        const [
-            shipGroupCount,
-            shipmentRecentActivity,
-            fiveLeadersWithMostShipments,
-            fiveUsersWithMostShipments,
-            parcelCount,
-            groupShippedCount,
-            shipmentRecentActivityNoGroup,
-        ] = await Promise.all([
-            ShipGroupDao.countAllShipGroups(),
-            ShipGroupDao.getShipmentRecentActivityAll(),
-            ShipGroupDao.getFiveLeadersWithMostShipments(),
-            ShipGroupDao.getFiveUsersWithMostShipments(),
-            ParcelsDao.countAllParcels(),
-            ShipGroupDao.countAllGroupShipped(),
-            ShipGroupDao.getShipmentRecentActivityNoGroup(),
-        ]);
+// const findDashboardMerchant = async (req, res) => {
+//     try {
+//         const [
+//             shipGroupCount,
+//             shipmentRecentActivity,
+//             fiveLeadersWithMostShipments,
+//             fiveUsersWithMostShipments,
+//             parcelCount,
+//             groupShippedCount,
+//             shipmentRecentActivityNoGroup,
+//             parcelRecentActivityNoGroup,
+//             shipmentRecentShippedActivity,
+//         ] = await Promise.all([
+//             ShipGroupDao.countAllShipGroups(),
+//             ShipGroupDao.getShipmentRecentActivityAll(),
+//             ShipGroupDao.getFiveLeadersWithMostShipments(),
+//             ShipGroupDao.getFiveUsersWithMostShipments(),
+//             ParcelsDao.countAllParcels(),
+//             ShipGroupDao.countAllGroupShipped(),
+//             ShipGroupDao.getShipmentRecentActivityNoGroup(),
+//             ParcelsDao.getParcelRecentActivityNoGroup(),
+//             ShipGroupDao.getShipmentRecentShippedActivityNoGroup(),
+//         ]);
 
-        const answer = {
-            ...shipGroupCount,
-            ...shipmentRecentActivity,
-            ...fiveLeadersWithMostShipments,
-            ...fiveUsersWithMostShipments,
-            ...parcelCount,
-            ...groupShippedCount,
-            ...shipmentRecentActivityNoGroup,
-        };
+//         const answer = {
+//             ...shipGroupCount,
+//             ...shipmentRecentActivity,
+//             ...fiveLeadersWithMostShipments,
+//             ...fiveUsersWithMostShipments,
+//             ...parcelCount,
+//             ...groupShippedCount,
+//             ...shipmentRecentActivityNoGroup,
+//             ...parcelRecentActivityNoGroup,
+//             ...shipmentRecentShippedActivity,
+//         };
 
-        res.json(answer);
-    } catch (err) {
-        res.status(500).send({ status: 500, detail: err.message });
-    }
-};
+//         res.json(answer);
+//     } catch (err) {
+//         res.status(500).send({ status: 500, detail: err.message });
+//     }
+// };
 
 const findDashboardAdmin = async (req, res) => {
     try {
@@ -58,6 +65,9 @@ const findDashboardAdmin = async (req, res) => {
             countRecentFormedShipGroup,
             groupShippedCount,
             shipmentRecentActivityNoGroup,
+            parcelRecentActivityNoGroup,
+            shipmentRecentShippedActivity,
+            recentPostsActivity,
         ] = await Promise.all([
             ShipGroupDao.countAllShipGroups(),
             ShipGroupDao.getShipmentRecentActivityAll(),
@@ -69,6 +79,9 @@ const findDashboardAdmin = async (req, res) => {
             ShipGroupDao.countRecentFormedShipGroupAll(),
             ShipGroupDao.countAllGroupShipped(),
             ShipGroupDao.getShipmentRecentActivityNoGroup(),
+            ParcelsDao.getParcelRecentActivityNoGroup(),
+            ShipGroupDao.getShipmentRecentShippedActivityNoGroup(),
+            PostDao.getPostsActivityDailyNoGroup(),
         ]);
 
         const answer = {
@@ -82,6 +95,9 @@ const findDashboardAdmin = async (req, res) => {
             ...countRecentFormedShipGroup,
             ...groupShippedCount,
             ...shipmentRecentActivityNoGroup,
+            ...parcelRecentActivityNoGroup,
+            ...shipmentRecentShippedActivity,
+            ...recentPostsActivity,
         };
 
         res.json(answer);
@@ -89,3 +105,6 @@ const findDashboardAdmin = async (req, res) => {
         res.status(500).send({ status: 500, detail: err.message });
     }
 };
+
+
+const findDashboardMerchant = findDashboardAdmin;
