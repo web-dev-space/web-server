@@ -9,47 +9,47 @@ const statisticController = (app) => {
 
 export default statisticController;
 
-const findDashboardMerchant = async (req, res) => {
-    try {
-        const [
-            shipGroupCount,
-            shipmentRecentActivity,
-            fiveLeadersWithMostShipments,
-            fiveUsersWithMostShipments,
-            parcelCount,
-            groupShippedCount,
-            shipmentRecentActivityNoGroup,
-            parcelRecentActivityNoGroup,
-            shipmentRecentShippedActivity,
-        ] = await Promise.all([
-            ShipGroupDao.countAllShipGroups(),
-            ShipGroupDao.getShipmentRecentActivityAll(),
-            ShipGroupDao.getFiveLeadersWithMostShipments(),
-            ShipGroupDao.getFiveUsersWithMostShipments(),
-            ParcelsDao.countAllParcels(),
-            ShipGroupDao.countAllGroupShipped(),
-            ShipGroupDao.getShipmentRecentActivityNoGroup(),
-            ParcelsDao.getParcelRecentActivityNoGroup(),
-            ShipGroupDao.getShipmentRecentShippedActivityNoGroup(),
-        ]);
+// const findDashboardMerchant = async (req, res) => {
+//     try {
+//         const [
+//             shipGroupCount,
+//             shipmentRecentActivity,
+//             fiveLeadersWithMostShipments,
+//             fiveUsersWithMostShipments,
+//             parcelCount,
+//             groupShippedCount,
+//             shipmentRecentActivityNoGroup,
+//             parcelRecentActivityNoGroup,
+//             shipmentRecentShippedActivity,
+//         ] = await Promise.all([
+//             ShipGroupDao.countAllShipGroups(),
+//             ShipGroupDao.getShipmentRecentActivityAll(),
+//             ShipGroupDao.getFiveLeadersWithMostShipments(),
+//             ShipGroupDao.getFiveUsersWithMostShipments(),
+//             ParcelsDao.countAllParcels(),
+//             ShipGroupDao.countAllGroupShipped(),
+//             ShipGroupDao.getShipmentRecentActivityNoGroup(),
+//             ParcelsDao.getParcelRecentActivityNoGroup(),
+//             ShipGroupDao.getShipmentRecentShippedActivityNoGroup(),
+//         ]);
 
-        const answer = {
-            ...shipGroupCount,
-            ...shipmentRecentActivity,
-            ...fiveLeadersWithMostShipments,
-            ...fiveUsersWithMostShipments,
-            ...parcelCount,
-            ...groupShippedCount,
-            ...shipmentRecentActivityNoGroup,
-            ...parcelRecentActivityNoGroup,
-            ...shipmentRecentShippedActivity,
-        };
+//         const answer = {
+//             ...shipGroupCount,
+//             ...shipmentRecentActivity,
+//             ...fiveLeadersWithMostShipments,
+//             ...fiveUsersWithMostShipments,
+//             ...parcelCount,
+//             ...groupShippedCount,
+//             ...shipmentRecentActivityNoGroup,
+//             ...parcelRecentActivityNoGroup,
+//             ...shipmentRecentShippedActivity,
+//         };
 
-        res.json(answer);
-    } catch (err) {
-        res.status(500).send({ status: 500, detail: err.message });
-    }
-};
+//         res.json(answer);
+//     } catch (err) {
+//         res.status(500).send({ status: 500, detail: err.message });
+//     }
+// };
 
 const findDashboardAdmin = async (req, res) => {
     try {
@@ -101,3 +101,6 @@ const findDashboardAdmin = async (req, res) => {
         res.status(500).send({ status: 500, detail: err.message });
     }
 };
+
+
+const findDashboardMerchant = findDashboardAdmin;
