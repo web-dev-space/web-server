@@ -46,7 +46,7 @@ export const signup = async (req, res) => {
 
         // return success response
         req.session["currentUser"] = newUser;
-        res.json(newUser);
+        res.json(await findUserByEmail(email));
     } catch (error) {
         res.status(500).json({ message: 'Error creating user' });
     }

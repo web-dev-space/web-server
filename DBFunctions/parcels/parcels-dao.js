@@ -24,8 +24,16 @@ export const countAllParcels = async () => {
 }
 
 export const findParcelsInShipGroup = async (shipGroupId) => {
-    return await parcelsModel.find({ shipGroup: shipGroupId }).exec();
-}
+    const objectId = mongoose.Types.ObjectId.isValid(shipGroupId)
+        ? new mongoose.Types.ObjectId(shipGroupId)
+        : null;
+
+    const query = {
+        shipGroup: { $in: objectId ? [shipGroupId, objectId] : [shipGroupId] },
+    };
+
+    return await parcelsModel.find(query).exec();
+};
 
 export const findParcelsInShipGroupAndCurrentUser = async (shipGroupId, userEmail) => {
     return await parcelsModel.find({ shipGroup: shipGroupId, user: userEmail }).exec();
