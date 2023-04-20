@@ -28,17 +28,17 @@ const schema = mongoose.Schema(
     warehouseAddress: {
       type: String,
       required: true,
-      default: "1234 Main St, Guangzhou, Guangdong",
+      default: "",
     },
     warehousePhone: {
       type: String,
       required: true,
-      default: "13800001234",
+      default: "",
     },
     warehouseReceiver: {
       type: String,
       required: true,
-      default: "John",
+      default: "",
     },
   },
   { versionKey: false },
