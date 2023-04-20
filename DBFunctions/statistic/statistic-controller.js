@@ -19,6 +19,8 @@ const findDashboardMerchant = async (req, res) => {
             parcelCount,
             groupShippedCount,
             shipmentRecentActivityNoGroup,
+            parcelRecentActivityNoGroup,
+            shipmentRecentShippedActivity,
         ] = await Promise.all([
             ShipGroupDao.countAllShipGroups(),
             ShipGroupDao.getShipmentRecentActivityAll(),
@@ -27,6 +29,8 @@ const findDashboardMerchant = async (req, res) => {
             ParcelsDao.countAllParcels(),
             ShipGroupDao.countAllGroupShipped(),
             ShipGroupDao.getShipmentRecentActivityNoGroup(),
+            ParcelsDao.getParcelRecentActivityNoGroup(),
+            ShipGroupDao.getShipmentRecentShippedActivityNoGroup(),
         ]);
 
         const answer = {
@@ -37,6 +41,8 @@ const findDashboardMerchant = async (req, res) => {
             ...parcelCount,
             ...groupShippedCount,
             ...shipmentRecentActivityNoGroup,
+            ...parcelRecentActivityNoGroup,
+            ...shipmentRecentShippedActivity,
         };
 
         res.json(answer);
@@ -58,6 +64,8 @@ const findDashboardAdmin = async (req, res) => {
             countRecentFormedShipGroup,
             groupShippedCount,
             shipmentRecentActivityNoGroup,
+            parcelRecentActivityNoGroup,
+            shipmentRecentShippedActivity,
         ] = await Promise.all([
             ShipGroupDao.countAllShipGroups(),
             ShipGroupDao.getShipmentRecentActivityAll(),
@@ -69,6 +77,8 @@ const findDashboardAdmin = async (req, res) => {
             ShipGroupDao.countRecentFormedShipGroupAll(),
             ShipGroupDao.countAllGroupShipped(),
             ShipGroupDao.getShipmentRecentActivityNoGroup(),
+            ParcelsDao.getParcelRecentActivityNoGroup(),
+            ShipGroupDao.getShipmentRecentShippedActivityNoGroup(),
         ]);
 
         const answer = {
@@ -82,6 +92,8 @@ const findDashboardAdmin = async (req, res) => {
             ...countRecentFormedShipGroup,
             ...groupShippedCount,
             ...shipmentRecentActivityNoGroup,
+            ...parcelRecentActivityNoGroup,
+            ...shipmentRecentShippedActivity,
         };
 
         res.json(answer);

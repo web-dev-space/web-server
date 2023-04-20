@@ -99,6 +99,72 @@ export const getShipmentRecentActivityNoGroup = async (type = 'weekly') => {
   return { recentShipGroupActivity: recentActivity };
 };
 
+export const getShipmentRecentShippedActivityNoGroup = async (type = 'weekly') => {
+  const multi = type === 'monthly' ? 30 : 7;
+
+  const dateLimit = new Date();
+  dateLimit.setDate(dateLimit.getDate() - 7 * multi);
+  const pipelineResult = await shipGroupsModel.aggregate([
+    {
+      $match: {
+        $expr: {
+          $and: [
+            { $gte: ["$shipEndDate", dateLimit] },
+            { $lte: ["$shipEndDate", new Date()] }
+          ]
+        }
+      },
+    },
+    {
+      $addFields: {
+        weekAgo: {
+          $floor: {
+            $subtract: [
+              { $divide: [{ $subtract: [new Date(), "$shipEndDate"] }, 86400000 * multi] },
+              0
+            ],
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        // must use `_id` to group and then project
+        _id: { weekAgo: '$weekAgo' },
+        count: { $sum: 1 }
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        weekAgo: "$_id.weekAgo",
+        count: 1,
+      }
+    },
+  ]).exec();
+
+  console.log('pipelineResult', pipelineResult);
+
+
+  const xList = type === 'monthly' ? [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
+
+  const temp = new Array(xList.length).fill(0);
+
+  pipelineResult.forEach((item) => {
+    const idx = xList.indexOf(item.weekAgo);
+    if (idx >= 0) {
+      temp[idx] = item.count;
+    }
+  });
+
+  const recentActivity = {
+    xValues: xList,
+    yValues: temp,
+  };
+
+  return { recentShipGroupShippedActivity: recentActivity };
+};
+
 export const getShipmentRecentActivity = async (type) => {
   const multi = type === 'monthly' ? 30 : 7;
 
