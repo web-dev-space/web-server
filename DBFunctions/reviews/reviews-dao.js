@@ -13,3 +13,6 @@ export const updateReview = (id, newReview) =>
 
 export const findReviewsForProject = (projectId) =>
   reviewsModel.find({ asin: projectId }).sort({ date: -1 }).exec();
+
+export const findReviewsByUserId = (userId) =>
+  reviewsModel.find({ user: userId }).sort({ date: -1 }).exec();

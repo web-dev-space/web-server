@@ -12,8 +12,15 @@ export const ReviewController = (app) => {
 // Find - all / by id
 const findAllReviews = async (req, res) => {
   try {
-    const reviews = await reviewsDao.findAllReviews();
-    res.json(reviews);
+    const userId = req.params.userId;
+    if (userId) {
+      const reviews = await reviewsDao.findReviewsByUserId(userId);
+      res.json(reviews);
+    } else {
+      const reviews = await reviewsDao.findAllReviews();
+      res.json(reviews);
+    }
+
   } catch (error) {
     res.status(500).json({ message: "An error occurred while fetching reviews." });
   }
