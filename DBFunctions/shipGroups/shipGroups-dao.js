@@ -77,9 +77,6 @@ export const getShipmentRecentActivityNoGroup = async (type = 'weekly') => {
     },
   ]).exec();
 
-  console.log('pipelineResult', pipelineResult);
-
-
   const xList = type === 'monthly' ? [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
 
   const temp = new Array(xList.length).fill(0);
@@ -142,9 +139,6 @@ export const getShipmentRecentShippedActivityNoGroup = async (type = 'weekly') =
       }
     },
   ]).exec();
-
-  console.log('pipelineResult', pipelineResult);
-
 
   const xList = type === 'monthly' ? [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
 
@@ -209,9 +203,6 @@ export const getShipmentRecentActivity = async (type) => {
       }
     },
   ]).exec();
-
-  console.log('pipelineResult', pipelineResult);
-
 
   const routesList = ['Air Standard', 'Air Sensitive', "Sea Standard", "Sea Sensitive"];
 

@@ -84,9 +84,6 @@ export const getParcelRecentActivityNoGroup = async (type = 'weekly') => {
     },
   ]).exec();
 
-  console.log('pipelineResult', pipelineResult);
-
-
   const xList = type === 'monthly' ? [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : [6, 5, 4, 3, 2, 1, 0];
 
   const temp = new Array(xList.length).fill(0);
