@@ -9,7 +9,7 @@ const schema = mongoose.Schema({
     isShipped: { type: Boolean, required: true, default: false },
     isWeighted: { type: Boolean, required: true, default: false },
     weight: { type: Number, required: false }, // not required
-    shipGroup: { type: String, required: false }, // not required
+    shipGroup: { type: mongoose.Schema.Types.Mixed, required: false }, // not required
     created: { type: Date, required: true, default: Date.now },
 },
     { versionKey: false },
