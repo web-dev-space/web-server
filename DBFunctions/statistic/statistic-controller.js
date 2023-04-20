@@ -1,6 +1,7 @@
 import * as ShipGroupDao from "../shipGroups/shipGroups-dao.js";
 import * as ParcelsDao from "../parcels/parcels-dao.js";
 import * as UsersDao from "../users/users-dao.js";
+import * as PostDao from "../posts/posts-dao.js";
 
 const statisticController = (app) => {
     app.get("/stat/merchant", findDashboardMerchant);
@@ -66,6 +67,7 @@ const findDashboardAdmin = async (req, res) => {
             shipmentRecentActivityNoGroup,
             parcelRecentActivityNoGroup,
             shipmentRecentShippedActivity,
+            recentPostsActivity,
         ] = await Promise.all([
             ShipGroupDao.countAllShipGroups(),
             ShipGroupDao.getShipmentRecentActivityAll(),
@@ -79,6 +81,7 @@ const findDashboardAdmin = async (req, res) => {
             ShipGroupDao.getShipmentRecentActivityNoGroup(),
             ParcelsDao.getParcelRecentActivityNoGroup(),
             ShipGroupDao.getShipmentRecentShippedActivityNoGroup(),
+            PostDao.getPostsActivityDailyNoGroup(),
         ]);
 
         const answer = {
@@ -94,6 +97,7 @@ const findDashboardAdmin = async (req, res) => {
             ...shipmentRecentActivityNoGroup,
             ...parcelRecentActivityNoGroup,
             ...shipmentRecentShippedActivity,
+            ...recentPostsActivity,
         };
 
         res.json(answer);
