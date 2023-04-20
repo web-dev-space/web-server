@@ -27,17 +27,17 @@ const schema = mongoose.Schema(
     numberParcels: { type: Number, required: false, default: 0 },
     warehouseAddress: {
       type: String,
-      required: true,
+      required: false,
       default: "",
     },
     warehousePhone: {
       type: String,
-      required: true,
+      required: false,
       default: "",
     },
     warehouseReceiver: {
       type: String,
-      required: true,
+      required: false,
       default: "",
     },
   },
