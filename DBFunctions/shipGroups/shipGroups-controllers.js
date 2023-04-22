@@ -1,4 +1,5 @@
 import * as shipGroupsDao from "./shipGroups-dao.js";
+import * as trackParcelDao from "../tracking/track-parcel-dao.js";
 
 export const ShipGroupsController = (app) => {
   app.get("/shipGroups/count", getShipGroupTotalNumber);
@@ -56,6 +57,9 @@ const findShipGroupByTrackingNumber = async (req, res) => {
 const createShipGroup = async (req, res) => {
   try {
     const newShipGroup = req.body;
+    if (newShipGroup.trackingNumber) {
+      trackParcelDao.createTrackParcel(newShipGroup.courier, newShipGroup.trackingNumber)
+    }
 
     const insertedShipGroup = await shipGroupsDao.createShipGroup(newShipGroup);
     res.json(insertedShipGroup);
@@ -80,11 +84,17 @@ const updateShipGroup = async (req, res) => {
   try {
     const idToUpdate = req.params.id;
     const updatedShipGroup = req.body;
-    const status = await shipGroupsDao.updateShipGroup(
+
+    const newShipGroup = await shipGroupsDao.updateShipGroup(
       idToUpdate,
       updatedShipGroup
     );
-    res.json(status);
+
+    if (newShipGroup.trackingNumber) {
+      trackParcelDao.createTrackParcel(newShipGroup.courier, newShipGroup.trackingNumber)
+    }
+
+    res.json(newShipGroup);
   } catch (err) {
     res.status(500).send({ status: 500, detail: err.message });
   }
