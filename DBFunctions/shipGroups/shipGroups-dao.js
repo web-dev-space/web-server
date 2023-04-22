@@ -1,7 +1,8 @@
-import shipGroupsModel from "./shipGroups-model.js";
-import getLastSevenWeekDates from '../utils/getLastSevenWeekDates.js';
+import { ObjectId } from 'mongodb';
+import { isValidObjectId } from 'mongoose';
 import ParcelModel from '../parcels/parcels-model.js';
-import mongoose from "mongoose";
+import getLastSevenWeekDates from '../utils/getLastSevenWeekDates.js';
+import shipGroupsModel from "./shipGroups-model.js";
 
 export const findAllShipGroups = async () => await shipGroupsModel.find();
 
@@ -435,8 +436,15 @@ export const getTotalWeight = async function (shipGroupId) {
   const result = await ParcelModel.aggregate([
     {
       $match: {
-        shipGroup: shipGroupId,
-        weight: { $exists: true }
+        $and: [
+          {
+            $or: [
+              { shipGroup: { $eq: shipGroupId } },
+              { shipGroup: { $eq: isValidObjectId(shipGroupId) ? new ObjectId(shipGroupId) : null } }
+            ]
+          },
+          { weight: { $exists: true } }
+        ],
       },
     },
     {
