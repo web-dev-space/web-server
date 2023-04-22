@@ -12,7 +12,7 @@ export const ReviewController = (app) => {
 // Find - all / by id
 const findAllReviews = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.query.userId;
     if (userId) {
       const reviews = await reviewsDao.findReviewsByUserId(userId);
       res.json(reviews);

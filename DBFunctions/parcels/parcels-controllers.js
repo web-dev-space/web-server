@@ -1,5 +1,6 @@
 import * as parcelsDao from './parcels-dao.js';
 import * as shipGroupsDao from '../shipGroups/shipGroups-dao.js';
+import * as trackParcelDao from "../tracking/track-parcel-dao.js";
 
 export const ParcelsController = (app) => {
     app.get('/parcels/count', countAllParcels);
@@ -58,6 +59,10 @@ const findParcelByTrackingNumber = async (req, res) => {
 const createParcel = async (req, res) => {
     try {
         const newParcel = req.body;
+        if (newParcel.trackingNumber) {
+            trackParcelDao.createTrackParcel(newParcel.courier, newParcel.trackingNumber)
+        }
+
         const insertedParcel = await parcelsDao.createParcel(newParcel);
         res.json(insertedParcel);
     } catch (error) {
@@ -82,11 +87,17 @@ const updateParcel = async (req, res) => {
         const idToUpdate = req.params.id;
         const updatedParcel = req.body;
         await parcelsDao.updateParcel(idToUpdate, updatedParcel)
-        const newParcel = await parcelsDao.findParcelById(idToUpdate);
+        let newParcel = await parcelsDao.findParcelById(idToUpdate);
         if (newParcel.shipGroup) {
             const shipGroup = await shipGroupsDao.findShipGroupById(newParcel.shipGroup);
             await shipGroupsDao.addTotalWeight(shipGroup)
         };
+
+        if (newParcel.trackingNumber) {
+            trackParcelDao.createTrackParcel(newParcel.courier, newParcel.trackingNumber)
+        }
+
+        newParcel = await parcelsDao.findParcelById(idToUpdate);
 
         res.json(newParcel);
     } catch (error) {
