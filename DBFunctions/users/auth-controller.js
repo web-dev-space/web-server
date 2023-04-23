@@ -1,7 +1,7 @@
 import {
     createBuyer,
     createMerchant,
-    createAdmin,
+    createAdmin, findAdminByEmail,
 } from './users-dao.js';
 import bcrypt from 'bcryptjs';
 import * as usersDao from "./users-dao.js";
@@ -72,6 +72,13 @@ export const login = async (req, res) => {
             return res.status(401).json({ message: 'Wrong password' });
         }
 
+        // 3. Check if user is banned. If so, return 403
+        const admin = await usersDao
+            .findAdminByEmail("admin@shipshare.com");
+        if (admin[0].blockList.indexOf(user._id.toString()) !== -1) {
+            return res.status(403).json({ message: 'User is banned' });
+        }
+
         // 4. Return success response
         req.session["currentUser"] = user;
         req.session.save(err => {});
@@ -79,6 +86,7 @@ export const login = async (req, res) => {
         console.log(req.session);
         res.json(user);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Error logging in' });
     }
 };
