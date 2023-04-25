@@ -19,7 +19,7 @@ export const AuthController = (app) => {
 // Sign up -- enter [name, email, password, role], return [newUser]
 export const signup = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role, company } = req.body;
 
         // Check if user with same email exists
         const existingUser = await findUserByEmail(email);
@@ -32,13 +32,20 @@ export const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // build new user
-        const newUser = { name, email, password: hashedPassword };
+        const newUser = role === 'buyer' ?
+            { name, email, password: hashedPassword } :
+            { name, email, password: hashedPassword, company };
         let createdUser = null;
         if (role === "buyer") {
             createdUser = await createBuyer(newUser);
         }
         else if (role === "merchant") {
             createdUser = await createMerchant(newUser);
+            // Add the new merchant to the banned list of the admin, until admin approves
+            let admin = await usersDao
+                .findAdminByEmail("admin@shipshare.com");
+            admin[0].blockList.push(createdUser._id.toString());
+            await usersDao.updateAdmin(admin[0]._id.toString(), admin[0]);
         }
         else if (role === "admin") {
             createdUser = await createAdmin(newUser);
@@ -48,6 +55,7 @@ export const signup = async (req, res) => {
         req.session["currentUser"] = newUser;
         res.json(await findUserByEmail(email));
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Error creating user' });
     }
 };
